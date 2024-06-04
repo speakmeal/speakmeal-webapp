@@ -39,4 +39,5 @@ export default function RootLayout({
 // Add ability to edit and delete existing measurement records
 // Fix key error in landing page - done
 // Finish account page - done
-// Add goals and targets session
+// Add goals and targets session - done
+//Add dashboard stats

@@ -63,11 +63,11 @@ function DashSidebar({ isSidebarOpen, toggleSidebar, location }: Props) {
         >
           <div className="flex flex-row space-x-5 items-center">
             <FaStar />
-            <p>Goals & Progress</p>
+            <p>Progress & Goals</p>
           </div>
         </a>
 
-        <div className="mt-[35vh]">
+        <div className="mt-[55vh]">
           <img src="/assets/background.png" />
         </div>
 

@@ -8,6 +8,7 @@ import { emptyUserDetails, Measurement, UserDetails } from "../types_db";
 import { createClient } from "../Utils/supabase/client";
 import { useRouter } from "next/navigation";
 import Alert from "../Components/Alert/Alert";
+import { formatDate } from "../Utils/helpers";
 
 const Goals: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -24,6 +25,7 @@ const Goals: React.FC = () => {
   const supabase = createClient();
   const router = useRouter();
 
+  //load the user's profile and measurements
   const loadData = async () => {
     setIsLoading(true);
 
@@ -60,6 +62,26 @@ const Goals: React.FC = () => {
     setIsLoading(false);
   };
 
+  //save changes to the user's goals to the database
+  const saveGoals = async () => {
+    setIsLoading(true);
+    const { error } = await supabase
+    .from("users")
+    .update({
+      target_daily_calories: userProfile.target_daily_calories,
+    })
+    .eq('id', userProfile.id);
+
+    if (error) {
+      triggerAlert(error.message, "error");
+      setIsLoading(false);
+      return;
+    }
+
+    triggerAlert("Goals updated successfully", "success");
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     loadData();
   }, []);
@@ -87,26 +109,57 @@ const Goals: React.FC = () => {
           ) : (
             <div>
               <h1 className="text-4xl font-semibold text-center">
-                Overall Progress
+                Progress
               </h1>
 
               {startingMeasurement && endingMeasurement ? (
-                <div className="overflow-x-auto">
-                  <table className="table">
+                <div className="overflow-x-auto mt-20">
+                  <table className="table table-zebra">
                     <thead>
                       <tr>
                         <th>Metric</th>
-                        <th>Start</th>
-                        <th>Current</th>
+                        <th>
+                          Start - {formatDate(startingMeasurement.created_at)}
+                        </th>
+                        <th>
+                          Current - {formatDate(endingMeasurement.created_at)}
+                        </th>
                         <th>Change</th>
                       </tr>
                     </thead>
 
                     <tbody>
-                      <tr>
-                        <td>Height</td>
-                        <td></td>
-                      </tr>
+                      {[
+                        [
+                          "height_cm",
+                          "weight_kg",
+                          "abdomen_cm",
+                          "hip_cm",
+                          "chest_cm",
+                        ].map((key, index) => {
+                          const [name, unit] = key.split("_");
+                          const change = (endingMeasurement[key as keyof Measurement] as number) - (startingMeasurement[key as keyof Measurement] as number);
+                          const percentageChange = 100 * (change / (startingMeasurement[key as keyof Measurement] as number));
+
+                          return (
+                            <tr key={index}>
+                              <td>
+                                {name.charAt(0).toUpperCase() + name.slice(1)} (
+                                {unit})
+                              </td>
+                              <td>
+                                {startingMeasurement[key as keyof Measurement]}
+                              </td>
+                              <td>
+                                {endingMeasurement[key as keyof Measurement]}
+                              </td>
+                              <td>
+                                {change} ({percentageChange.toFixed(2)} %)
+                              </td>
+                            </tr>
+                          );
+                        }),
+                      ]}
                     </tbody>
                   </table>
                 </div>
@@ -121,6 +174,31 @@ const Goals: React.FC = () => {
                   </button>
                 </div>
               )}
+
+              <div className="border-t-2 rounded-full mt-20 mx-10"></div>
+
+              <h1 className="text-4xl font-semibold text-center mt-5">Goals</h1>
+
+              <div className="text-center">
+                <div className="flex flex-row justify-center items-center space-x-5 mt-10">
+                  <p>Daily Calorie Target: </p>
+                  <input
+                    className="input input-bordered text-sm"
+                    value={userProfile.target_daily_calories}
+                    type="number"
+                    onChange={(e) =>
+                      setUserProfile((prev) => ({
+                        ...prev,
+                        target_daily_calories: parseInt(e.target.value),
+                      }))
+                    }
+                  ></input>
+                </div>
+
+                <button className="btn btn-primary mt-10 w-32" onClick={saveGoals}>
+                  Save
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -158,7 +158,7 @@ const DashboardPage: React.FC = () => {
                 <Line data={lineData} />
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-md col-span-1 md:col-span-2 lg:col-span-3">
+              {/* <div className="bg-white p-6 rounded-lg shadow-md col-span-1 md:col-span-2 lg:col-span-3">
                 <h2 className="text-xl font-bold">Personal Goals & Progress</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
                   <div className="bg-gray-100 p-4 rounded-lg">
@@ -180,7 +180,7 @@ const DashboardPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </main>
         </div>
