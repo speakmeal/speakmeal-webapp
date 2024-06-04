@@ -8,6 +8,7 @@ import { useAlert } from "../Components/Alert/useAlert";
 import LoadingIndicator from "../Components/LoadingIndicator";
 import Alert from "../Components/Alert/Alert";
 import { formatDate, getTotals } from "../Utils/helpers";
+import { useRouter } from "next/navigation";
 
 const Logs: React.FC = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
@@ -19,6 +20,7 @@ const Logs: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const supabase = createClient();
+  const router = useRouter();
 
   const loadData = async () => {
     setIsLoading(true);
@@ -42,7 +44,7 @@ const Logs: React.FC = () => {
       .select("*, food_item(*)")
       .order("created_at", { ascending: false }); //sort records by date of creation and show most recent at the top
 
-    if (mealsError){
+    if (mealsError) {
       triggerAlert(mealsError.message, "error");
       setIsLoading(false);
       return;
@@ -56,14 +58,6 @@ const Logs: React.FC = () => {
     //load the saved meals and measurements from the database
     loadData();
   }, []);
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <LoadingIndicator />
-      </div>
-    );
-  }
 
   return (
     <div className="flex w-full min-h-screen">
@@ -81,76 +75,70 @@ const Logs: React.FC = () => {
             </button>
           </header>
 
-          <div>
-            <h1 className="text-center text-4xl font-semibold">My logs</h1>
+          {isLoading ? (
+            <div className="h-screen flex justify-center items-center">
+              <LoadingIndicator />
+            </div>
+          ) : (
+            <div>
+              <h1 className="text-center text-4xl font-semibold">My logs</h1>
 
-            <div className="mt-5">
-              <h2 className="p-5 text-black text-xl">Meals</h2>
-              <div className="overflow-x-auto overflow-y-scroll h-[45vh] border-2 rounded-md">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Meal Type</th>
-                      <th>Date</th>
-                      <th>Carbohydrates (g)</th>
-                      <th>Protein (g)</th>
-                      <th>Fat (g)</th>
-                      <th>Calories</th>
-                    </tr>
-                  </thead>
+              <div className="mt-5">
+                <h2 className="p-5 text-black text-xl">Meals</h2>
+                <div className="overflow-x-auto overflow-y-scroll h-[45vh] border-2 rounded-md">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Meal Type</th>
+                        <th>Date</th>
+                        <th>Carbohydrates (g)</th>
+                        <th>Protein (g)</th>
+                        <th>Fat (g)</th>
+                        <th>Calories</th>
+                      </tr>
+                    </thead>
 
-                  <tbody>
-                    {
-                      meals.map((meal, index) => {
+                    <tbody>
+                      {meals.map((meal, index) => {
                         const totals = getTotals(meal.food_item);
                         return (
-                          <tr className="hover hover:cursor-pointer" key={index}>
-                            <td>
-                              {meal.type}
-                            </td>
-                            <td>
-                              {formatDate(meal.created_at)}
-                            </td>
-                            <td>
-                              {totals.carbs_g}
-                            </td>
-                            <td>
-                              {totals.protein_g}
-                            </td>
-                            <td>
-                              {totals.fat_g}
-                            </td>
-                            <td>
-                              {totals.calories}
-                            </td>
+                          <tr
+                            className="hover hover:cursor-pointer"
+                            key={index}
+                            onClick={() => router.push(`/meals/${meal.id}`)}
+                          >
+                            <td>{meal.type}</td>
+                            <td>{formatDate(meal.created_at)}</td>
+                            <td>{totals.carbs_g}</td>
+                            <td>{totals.protein_g}</td>
+                            <td>{totals.fat_g}</td>
+                            <td>{totals.calories}</td>
                           </tr>
-                        )
-                      })
-                    }
-                  </tbody>
-                </table>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
 
-            <div className="mt-5 pb-5">
-              <h2 className="p-5 text-black text-xl">Measurements</h2>
+              <div className="mt-5 pb-5">
+                <h2 className="p-5 text-black text-xl">Measurements</h2>
 
-              <div className="overflow-x-auto overflow-y-scroll h-[45vh] border-2 rounded-lg">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Weight (kg)</th>
-                      <th>Height (cm)</th>
-                      <th>Abdomen (cm)</th>
-                      <th>Hip (cm)</th>
-                      <th>Chest (cm)</th>
-                    </tr>
-                  </thead>
+                <div className="overflow-x-auto overflow-y-scroll h-[45vh] border-2 rounded-lg">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Weight (kg)</th>
+                        <th>Height (cm)</th>
+                        <th>Abdomen (cm)</th>
+                        <th>Hip (cm)</th>
+                        <th>Chest (cm)</th>
+                      </tr>
+                    </thead>
 
-                  <tbody>
-                    {
-                      measurements.map((measurement, index) => (
+                    <tbody>
+                      {measurements.map((measurement, index) => (
                         <tr key={index}>
                           <td>{formatDate(measurement.created_at)}</td>
                           <td>{measurement.weight_kg}</td>
@@ -159,13 +147,13 @@ const Logs: React.FC = () => {
                           <td>{measurement.hip_cm}</td>
                           <td>{measurement.chest_cm}</td>
                         </tr>
-                      ))
-                    }
-                  </tbody>
-                </table>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       )}
 

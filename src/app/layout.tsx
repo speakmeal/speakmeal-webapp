@@ -35,8 +35,8 @@ export default function RootLayout({
 
 
 //TODO: 
-// Add ability to edit and delete existing meals
+// Add ability to edit and delete existing meals - done
 // Add ability to edit and delete existing measurement records
-// Fix key error in landing page
-// Finish account page
+// Fix key error in landing page - done
+// Finish account page - done
 // Add goals and targets session

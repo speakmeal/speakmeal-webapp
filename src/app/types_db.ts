@@ -358,9 +358,16 @@ export type MealType = 'Breakfast' | 'Lunch' | 'Dinner' | 'Snack'
 export interface Meal {
   id: number;
   created_at: string;
-  type: MealType;
+  type: MealType | '';
   owner_id: string;
   food_item: FoodItem[];
+}
+export const emptyMeal: Meal = {
+  id: -1,
+  created_at: '', 
+  type: '', 
+  owner_id: '', 
+  food_item: []
 }
 
 export interface Measurement {
@@ -390,7 +397,7 @@ export interface UserDetails {
   target_daily_calories: number;
   email: string;
   age: number;
-  sex: 'Male' | 'Female';
+  gender: 'Male' | 'Female' | 'Not specified';
 }
 export const emptyUserDetails: UserDetails = {
   id: '', 
@@ -398,5 +405,5 @@ export const emptyUserDetails: UserDetails = {
   target_daily_calories: 0, 
   email: '', 
   age: 0, 
-  sex: 'Male'
+  gender: 'Not specified'
 }

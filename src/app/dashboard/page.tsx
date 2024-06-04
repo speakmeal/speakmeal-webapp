@@ -76,7 +76,7 @@ const DashboardPage: React.FC = () => {
               <Bars3Icon className="h-6 w-6 text-black" />
             </button>
             <h1 className="text-2xl font-bold">
-              Hello, Welcome Back! 👋
+              Hello [name], 👋 
             </h1>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
