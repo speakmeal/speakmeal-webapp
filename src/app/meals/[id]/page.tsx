@@ -9,7 +9,6 @@ import {
 } from "@/app/types_db";
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/app/Components/Alert/useAlert";
 import Alert from "@/app/Components/Alert/Alert";
