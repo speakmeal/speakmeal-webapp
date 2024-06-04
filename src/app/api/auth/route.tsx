@@ -2,6 +2,8 @@ import { cookies } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Given request with email confirmation code, authenticate the user and redirect them to the dashboard
  */

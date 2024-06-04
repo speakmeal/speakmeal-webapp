@@ -145,7 +145,7 @@ xf
       <div id="pricing">
         <h1 className="text-3xl md:text-4xl font-bold text-center">Pricing</h1>
         <p className="text-center mt-2 text-lg">
-          3 protein bars per month, that's all we ask
+          {"3 protein bars per month, that\'s all we ask"}
         </p>
         <PriceBanner name="Personal Plan" descriptionLines={
           ["Daily Logging", 

@@ -84,7 +84,7 @@ export default function Pricing({ products }: Props) {
         <section>
           <div>
             <div className="mt-12 space-y-4 sm:mt-16 sm:space-y-0 flex flex-wrap justify-center gap-6 w-full">
-              {products.map((product) => {
+              {products.map((product, index) => {
                 const price = product?.prices?.find(
                   (price) => price.interval === "month"
                 );
@@ -97,7 +97,7 @@ export default function Pricing({ products }: Props) {
                 }).format((price?.unit_amount || 0) / 100);
 
                 return (
-                  <div className="w-full">
+                  <div className="w-full" key={index}>
                     <h1 className="text-center text-3xl md:text-4xl font-bold">
                       Choose a plan
                     </h1>

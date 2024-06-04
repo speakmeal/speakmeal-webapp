@@ -101,10 +101,10 @@ const Logs: React.FC = () => {
 
                   <tbody>
                     {
-                      meals.map((meal) => {
+                      meals.map((meal, index) => {
                         const totals = getTotals(meal.food_item);
                         return (
-                          <tr className="hover hover:cursor-pointer">
+                          <tr className="hover hover:cursor-pointer" key={index}>
                             <td>
                               {meal.type}
                             </td>
@@ -150,8 +150,8 @@ const Logs: React.FC = () => {
 
                   <tbody>
                     {
-                      measurements.map((measurement) => (
-                        <tr>
+                      measurements.map((measurement, index) => (
+                        <tr key={index}>
                           <td>{formatDate(measurement.created_at)}</td>
                           <td>{measurement.weight_kg}</td>
                           <td>{measurement.height_cm}</td>

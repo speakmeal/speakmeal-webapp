@@ -134,7 +134,7 @@ const LogIn: React.FC = () => {
           </form>
 
           <p className="text-center text-gray-600 mt-5">
-            Don't have an account?
+            {"Don\'t have an account?"}
             <a
               className="text-purple-600 hover:text-purple-700 font-semibold"
               href="/SignIn"

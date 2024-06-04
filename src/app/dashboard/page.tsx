@@ -110,7 +110,7 @@ const DashboardPage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-white p-6 rounded-lg shadow-md">
-                <h2 className="text-xl font-bold">Today's Intake</h2>
+                <h2 className="text-xl font-bold">{"Today\'s Intake"}</h2>
                 <div className="mt-4">
                   <p className="text-sm">Oct 4</p>
                   <div className="bg-gray-200 h-4 rounded-full mt-2">
@@ -149,7 +149,7 @@ const DashboardPage: React.FC = () => {
               </div>
 
               <div className="bg-white p-6 rounded-lg shadow-md">
-                <h2 className="text-xl font-bold">Today's Macros</h2>
+                <h2 className="text-xl font-bold">{"Today\'s Macros"}</h2>
                 <Doughnut data={doughnutData} />
               </div>
 
