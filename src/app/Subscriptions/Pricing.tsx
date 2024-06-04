@@ -33,7 +33,7 @@ export default function Pricing({ products }: Props) {
 
     const { errorRedirect, sessionId } = await checkoutWithStripe(
       price,
-      '/Dashboard'
+      '/dashboard'
     );
 
     if (errorRedirect) {

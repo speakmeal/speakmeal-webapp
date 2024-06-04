@@ -22,7 +22,7 @@ const TRIAL_PERIOD_DAYS = 7; //number of days for the trial period
 
 export async function checkoutWithStripe(
   price: Price,
-  redirectPath: string = '/Dashboard'
+  redirectPath: string = '/dashboard'
 ): Promise<CheckoutResponse> {
   try {
     // Get the user from Supabase auth

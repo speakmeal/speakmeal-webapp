@@ -31,8 +31,6 @@ export async function updateSession(req: NextRequest) {
     return NextResponse.rewrite(new URL("/LogIn", req.url));
   }
 
-  console.log(session);
-
   //if requested url requires subscription, check if teh user has a valid subscription
   const exclusiveUrls = ["/dashboard", "/logs", "/goals", "/account"];
   if (exclusiveUrls.includes(req.nextUrl.pathname)) {
