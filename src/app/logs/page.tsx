@@ -109,10 +109,10 @@ const Logs: React.FC = () => {
                           >
                             <td>{meal.type}</td>
                             <td>{formatDate(meal.created_at)}</td>
-                            <td>{totals.carbs_g}</td>
-                            <td>{totals.protein_g}</td>
-                            <td>{totals.fat_g}</td>
-                            <td>{totals.calories}</td>
+                            <td>{totals.carbs_g.toFixed(2)}</td>
+                            <td>{totals.protein_g.toFixed(2)}</td>
+                            <td>{totals.fat_g.toFixed(2)}</td>
+                            <td>{totals.calories.toFixed(0)}</td>
                           </tr>
                         );
                       })}
@@ -141,11 +141,11 @@ const Logs: React.FC = () => {
                       {measurements.map((measurement, index) => (
                         <tr key={index}>
                           <td>{formatDate(measurement.created_at)}</td>
-                          <td>{measurement.weight_kg}</td>
-                          <td>{measurement.height_cm}</td>
-                          <td>{measurement.abdomen_cm}</td>
-                          <td>{measurement.hip_cm}</td>
-                          <td>{measurement.chest_cm}</td>
+                          <td>{measurement.weight_kg.toFixed(2)}</td>
+                          <td>{measurement.height_cm.toFixed(2)}</td>
+                          <td>{measurement.abdomen_cm.toFixed(2)}</td>
+                          <td>{measurement.hip_cm.toFixed(2)}</td>
+                          <td>{measurement.chest_cm.toFixed(2)}</td>
                         </tr>
                       ))}
                     </tbody>

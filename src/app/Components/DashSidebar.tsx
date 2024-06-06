@@ -17,7 +17,7 @@ function DashSidebar({ isSidebarOpen, toggleSidebar, location }: Props) {
         isSidebarOpen ? "block" : "hidden"
       } md:block`}
     >
-      <div className="flex flex-row items-center space-x-10 justify-between px-5">
+      <div className="flex flex-row items-center space-x-10 justify-between px-5 flex-grow">
         <div className="flex items-center justify-center space-x-3 py-4 ">
           <Image
             src="/assets/logo.png"

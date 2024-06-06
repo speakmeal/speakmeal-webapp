@@ -340,19 +340,19 @@ const NewMeal: React.FC<RouteParams> = ({ params: { id } }: RouteParams) => {
               <tbody>
                 <tr>
                   <td>Carbohydrates (g)</td>
-                  <td>{totals.carbs_g}</td>
+                  <td>{totals.carbs_g.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td>Protein (g)</td>
-                  <td>{totals.protein_g}</td>
+                  <td>{totals.protein_g.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td>Fat (g)</td>
-                  <td>{totals.fat_g}</td>
+                  <td>{totals.fat_g.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td>Calories</td>
-                  <td>{totals.calories}</td>
+                  <td>{totals.calories.toFixed(0)}</td>
                 </tr>
               </tbody>
             </table>

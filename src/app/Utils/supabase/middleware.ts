@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function updateSession(req: NextRequest) {
   let res = NextResponse.next();
+  const url = req.nextUrl.clone()
+
   const supabase = createMiddlewareClient(
     { req, res },
     {
@@ -21,18 +23,19 @@ export async function updateSession(req: NextRequest) {
   } = await supabase.auth.getSession();
 
   //if requested url is public there is no need to check session
-  const publicUrls = ["/", "/LogIn", "/SignIn", "/PasswordReset"];
+  const publicUrls = ["/", "/LogIn", "/SignIn", "/PasswordReset", "/api/auth"];
   if (publicUrls.includes(req.nextUrl.pathname)) {
     return res;
   }
 
   //if user is not logged in and tries to access protected url, redirect them to the login page
   if (!session) {
-    return NextResponse.rewrite(new URL("/LogIn", req.url));
+    url.pathname = "/LogIn"
+    return NextResponse.redirect(url)
   }
 
   //if requested url requires subscription, check if teh user has a valid subscription
-  const exclusiveUrls = ["/dashboard", "/logs", "/goals", "/account"];
+  const exclusiveUrls = ["/dashboard", "/logs", "/goals", "/account", '/api/getIngredients', '/api/getMacros'];
   if (exclusiveUrls.includes(req.nextUrl.pathname)) {
     const { data: subscription, error } = await supabase
       .from("subscriptions")
@@ -46,7 +49,8 @@ export async function updateSession(req: NextRequest) {
       error ||
       (subscription.status !== "active" && subscription.status !== "trialing")
     ) {
-      return NextResponse.rewrite(new URL("/Subscriptions", req.url));
+      url.pathname = "/Subscriptions"
+      return NextResponse.redirect(url);
     }
   }
 

@@ -40,4 +40,5 @@ export default function RootLayout({
 // Fix key error in landing page - done
 // Finish account page - done
 // Add goals and targets session - done
-//Add dashboard stats
+//Add dashboard stats - done
+//Protect api endpoints - done
