@@ -371,7 +371,7 @@ const DashboardPage: React.FC = () => {
                     <div className="flex flex-row items-center space-x-4">
                       <FaUser />
                       <p>
-                        You haven't told us your name yet.{" "}
+                        {"You haven\'t told us your name yet."}{" "}
                         <a className="text-primary" href="/account">
                           Finish setting up your profile
                         </a>
@@ -383,7 +383,7 @@ const DashboardPage: React.FC = () => {
                     <div className="flex flex-row items-center space-x-4">
                       <FaTape />
                       <p>
-                        You haven't added any measurements yet.{" "}
+                        {"You haven\'t added any measurements yet."}{" "}
                         <a className="text-primary" href="/measurements/new">
                           Add one now to start tracking your progress.
                         </a>
