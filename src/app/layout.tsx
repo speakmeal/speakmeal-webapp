@@ -35,10 +35,10 @@ export default function RootLayout({
 
 
 //TODO: 
-// Add ability to edit and delete existing meals - done
-// Add ability to edit and delete existing measurement records
-// Fix key error in landing page - done
-// Finish account page - done
-// Add goals and targets session - done
-//Add dashboard stats - done
-//Protect api endpoints - done
+// Update subscription product description by running webhook locally
+// Test stripe subscription flow 
+//Add credit limit for free users (waiting for confirmation)
+//Improve goals section with sliders, like in the onboarding page + add pre-determined ratios (e.g keto (80% protein, 15% fat, 5% carbs))
+
+//Add bicep measurement
+//Add upgrade button in account page for free users

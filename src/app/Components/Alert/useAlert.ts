@@ -14,7 +14,7 @@ export const useAlert = () => {
         setMessage(msg);
         setType(type);
         setShowAlert(true);
-
+        window.scrollTo({top: 0, behavior: 'smooth'})
         setTimeout(() => setShowAlert(false), duration); //hide snackbar after <duration> ms
     }
 

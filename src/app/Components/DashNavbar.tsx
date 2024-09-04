@@ -1,14 +1,13 @@
 import React from 'react'
 import Image from 'next/image';
 import { FaArrowLeft } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
-interface Props {
-    redirectPath: string;
-}
+function DashNavbar() {
+  const router = useRouter();
 
-function DashNavbar({redirectPath}: Props) {
   return (
-    <nav className="p-4 flex justify-between items-center shadow-md bg-white">
+    <nav className="p-4 flex justify-between items-center shadow-md bg-gray-600 bg-opacity-30 rounded-md mx-5">
     <div className="flex items-center">
       <Image
         src="/assets/logo.png"
@@ -16,14 +15,14 @@ function DashNavbar({redirectPath}: Props) {
         width={40}
         height={40}
       />
-      <span className="text-xl font-bold text-black ml-2">Speak Meal</span>
+      <span className="text-xl font-bold text-white ml-2">Speak Meal</span>
     </div>
-    <a
-      className="btn btn-outline btn-light"
-      href={redirectPath}
+    <button
+      className="btn btn-outline btn-light text-white"
+      onClick={() => router.back()}
     >
       <FaArrowLeft />
-    </a>
+    </button>
   </nav>
   )
 }

@@ -10,7 +10,7 @@ interface Props {
 };
 
 
-export default function PriceBanner({name, descriptionLines, monthlyPriceString, callback}: Props) {
+export default function PriceBanner({name, descriptionLines, monthlyPriceString, callback }: Props) {
   const router = useRouter();
 
     return (
@@ -19,7 +19,7 @@ export default function PriceBanner({name, descriptionLines, monthlyPriceString,
           <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
             {/* Personal Plan */}
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="bg-blue-600 text-white text-center py-6">
+              <div className="bg-[#4F19D6] text-white text-center py-6">
                 <h3 className="text-2xl font-semibold">{name}</h3>
                 <p className="mt-2">
                   <span className="text-4xl font-bold">{monthlyPriceString}</span>
@@ -38,15 +38,14 @@ export default function PriceBanner({name, descriptionLines, monthlyPriceString,
                 </div>
 
                 <div className="mt-8">
-                  <button className="bg-purple-600 text-white py-3 px-6 rounded-full transition-transform transform hover:scale-105"
+                  <button className="bg-[#4F19D6] text-white py-3 px-6 rounded-full transition-transform transform hover:scale-105"
                           onClick={() => {
                             if (callback){
                               callback();
                             } else {
                               router.push("/SignIn");
                             }
-                          }}>Start Your Journey</button>
-                  <p className="text-gray-500 mt-4">7-Day Free Trial</p>
+                          }}>Upgrade</button>
                 </div>
               </div>
             </div>

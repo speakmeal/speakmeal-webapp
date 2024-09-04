@@ -14,16 +14,18 @@ export async function GET(req: NextRequest) {
     supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_KEY
   })
   
-  // Extracts the search params from the requested url, supabase assigns
-  // some custom search params to verify auth
-  const { searchParams } = new URL(req.url)
-  
-  // a verification code is extracted from the search params
-  const code = searchParams.get("code")
+  //get code from the search parameters
+  const { searchParams } = new URL(req.url);
+  const code = searchParams.get("code");
 
   if (code) {
     // Create a cookie-based user session from the code
-    await supabase.auth.exchangeCodeForSession(code)
+    try{
+      await supabase.auth.exchangeCodeForSession(code);
+      console.log('==== Code verified successfully ====')
+    } catch ( err ) {
+      console.log('[Warning] Supabase code validation auth error: ' + err)
+    }
   }
 
   // Redirect the user to the dashboard URL after authentication

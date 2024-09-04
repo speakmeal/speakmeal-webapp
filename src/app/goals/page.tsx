@@ -9,6 +9,33 @@ import { createClient } from "../Utils/supabase/client";
 import { useRouter } from "next/navigation";
 import Alert from "../Components/Alert/Alert";
 import { formatDate } from "../Utils/helpers";
+import PieChart from "../meals/PieChart";
+import { FaBurn, FaDumbbell, FaWeight } from "react-icons/fa";
+import { FaScaleBalanced } from "react-icons/fa6";
+
+interface MacroPercentageInputs {
+  carbohydrates: number;
+  proteins: number;
+  fats: number;
+}
+
+const prebuitPlans = {
+  'fat loss': {
+    carbohydrates: 25, 
+    proteins: 45, 
+    fats: 30
+  }, 
+  'muscle gain': {
+    carbohydrates: 45, 
+    proteins: 35, 
+    fats: 20
+  }, 
+  'weight loss': {
+    carbohydrates: 30,
+    proteins: 40, 
+    fats: 30
+  }
+};
 
 const Goals: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -20,13 +47,108 @@ const Goals: React.FC = () => {
     useState<Measurement | null>(null);
   const [endingMeasurement, setEndingMeasurement] =
     useState<Measurement | null>(null);
-  const [userProfile, setUserProfile] = useState<UserDetails>(emptyUserDetails);
+  const [dailyCalorieGoal, setDailyCalorieGoal] = useState<number>(0);
+  const [macroPercentageInputs, setMacroPercentageInputs] =
+    useState<MacroPercentageInputs>({
+      carbohydrates: 60,
+      proteins: 30,
+      fats: 10,
+    });
+  const [showGoalsSave, setShowGoalsSave] = useState<boolean>(true);
 
   const supabase = createClient();
   const router = useRouter();
 
-  //load the user's profile and measurements
-  const loadData = async () => {
+  const caloriesPerGram = {
+    carbohydrates: 4,
+    proteins: 4,
+    fats: 9,
+  };
+
+  /**
+   * Using the total amount of calories eaten per day and the percentage of the total calories associated with a macro,
+   * calculate the amount of grams that should be consumed for that macro.
+   * This assumes:
+   *    - 1g of carbs = 4 calories
+   *    - 1g of protein = 4 calories
+   *    - 1g of fat = 9 calories
+   * @param macro
+   */
+  const getMacroTargetGrams = (macro: keyof MacroPercentageInputs) => {
+    const macroPercentage = macroPercentageInputs[macro];
+
+    return Math.round(
+      ((dailyCalorieGoal / 100) * macroPercentage) / caloriesPerGram[macro]
+    );
+  };
+
+  /**
+   * Inverse of 'getMacroTargetGrams'
+   * @param macro 
+   * @param totalCalories 
+   */
+  const getMacroTargetPercentage = (macro: keyof MacroPercentageInputs, macroTargetG: number, totalCalories: number) => {
+    console.log(macroTargetG * caloriesPerGram[macro])
+    return Math.round(((macroTargetG * caloriesPerGram[macro]) / totalCalories) * 100);
+  }
+
+  /**
+   * Save Calorie and nutrient goals to the database
+   */
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const { error } = await supabase
+      .from("users")
+      .update({
+        target_daily_calories: dailyCalorieGoal,
+        carbohydrates_grams_goal: getMacroTargetGrams("carbohydrates"),
+        protein_grams_goal: getMacroTargetGrams("proteins"),
+        fat_grams_goal: getMacroTargetGrams("fats"),
+      })
+      .eq("id", user?.id);
+
+    if (error) {
+      triggerAlert(error.message, "error");
+      setIsLoading(false);
+    }
+
+    router.push("/dashboard");
+  };
+
+  /**
+   * Get span to display change in the value of a measurement
+   * @param change absolute change in the value
+   * @param percentageChange percentage change in the value
+   * @returns span with a formatted change label
+   */
+  const getChangeIndicator = (change: number, percentageChange: number) => {
+    if (change > 0) {
+      return (
+        <span className="text-green-500">
+          ⬆️ {change.toFixed(2)}{" "}
+          <span className="text-sm">(+{percentageChange.toFixed(2)}%)</span>
+        </span>
+      );
+    } else if (change < 0) {
+      return (
+        <span className="text-red-500">
+          ⬇️ {change.toFixed(2)}{" "}
+          <span className="text-sm">(-{percentageChange.toFixed(2)}%)</span>
+        </span>
+      );
+    } else {
+      return <span className="text-gray-500">-</span>;
+    }
+  };
+
+  /**
+   * Load the existing goals saved by the user when the page loads
+   */
+  const onPageLoad = async () => {
     setIsLoading(true);
 
     //get all of the user's measurements to have access to the starting and final ones
@@ -46,7 +168,7 @@ const Goals: React.FC = () => {
       setEndingMeasurement(measurements[measurements.length - 1]);
     }
 
-    //get the user's profile data
+    //get the user's nutritional targets
     const { data: profile, error: profileError } = await supabase
       .from("users")
       .select("*")
@@ -57,37 +179,34 @@ const Goals: React.FC = () => {
       setIsLoading(false);
       return;
     }
-    setUserProfile(profile);
+    
+    setDailyCalorieGoal(profile.target_daily_calories);
 
-    setIsLoading(false);
-  };
-
-  //save changes to the user's goals to the database
-  const saveGoals = async () => {
-    setIsLoading(true);
-    const { error } = await supabase
-    .from("users")
-    .update({
-      target_daily_calories: userProfile.target_daily_calories,
+    //recover percentages for nutrients from the gram values stored in the database
+    setMacroPercentageInputs({
+      carbohydrates: getMacroTargetPercentage('carbohydrates', profile.carbohydrates_grams_goal, profile.target_daily_calories), 
+      proteins: getMacroTargetPercentage('proteins', profile.protein_grams_goal, profile.target_daily_calories), 
+      fats: getMacroTargetPercentage('fats', profile.fat_grams_goal, profile.target_daily_calories)
     })
-    .eq('id', userProfile.id);
 
-    if (error) {
-      triggerAlert(error.message, "error");
-      setIsLoading(false);
-      return;
-    }
-
-    triggerAlert("Goals updated successfully", "success");
     setIsLoading(false);
   };
 
   useEffect(() => {
-    loadData();
+    onPageLoad();
   }, []);
 
+  //mapping of measurement keys, descriptions and emojis
+  const metrics = [
+    { key: "height_cm", label: "Height", emoji: "📏" },
+    { key: "weight_kg", label: "Weight", emoji: "⚖️" },
+    { key: "abdomen_cm", label: "Abdomen", emoji: "🧍‍♂️" },
+    { key: "hip_cm", label: "Hip", emoji: "🍑" },
+    { key: "chest_cm", label: "Chest", emoji: "💪" },
+  ];
+
   return (
-    <div className="flex w-full min-h-screen">
+    <div className="flex w-full min-h-screen bg-black">
       <DashSidebar
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -108,60 +227,54 @@ const Goals: React.FC = () => {
             </div>
           ) : (
             <div>
-              <h1 className="text-4xl font-semibold text-center">
+              <h1 className="text-4xl font-semibold text-center text-white">
                 Progress
               </h1>
 
               {startingMeasurement && endingMeasurement ? (
-                <div className="overflow-x-auto mt-20">
-                  <table className="table table-zebra">
-                    <thead>
-                      <tr>
-                        <th>Metric</th>
-                        <th>
-                          Start - {formatDate(startingMeasurement.created_at)}
-                        </th>
-                        <th>
-                          Current - {formatDate(endingMeasurement.created_at)}
-                        </th>
-                        <th>Change</th>
-                      </tr>
-                    </thead>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center mt-20">
+                  {metrics.map(({ key, label, emoji }) => {
+                    const change =
+                      (endingMeasurement[key as keyof Measurement] as number) -
+                      (startingMeasurement[key as keyof Measurement] as number);
 
-                    <tbody>
-                      {[
-                        [
-                          "height_cm",
-                          "weight_kg",
-                          "abdomen_cm",
-                          "hip_cm",
-                          "chest_cm",
-                        ].map((key, index) => {
-                          const [name, unit] = key.split("_");
-                          const change = (endingMeasurement[key as keyof Measurement] as number) - (startingMeasurement[key as keyof Measurement] as number);
-                          const percentageChange = 100 * (change / (startingMeasurement[key as keyof Measurement] as number));
+                    const percentageChange =
+                      (change /
+                        (startingMeasurement[
+                          key as keyof Measurement
+                        ] as number)) *
+                      100;
 
-                          return (
-                            <tr key={index}>
-                              <td>
-                                {name.charAt(0).toUpperCase() + name.slice(1)} (
-                                {unit})
-                              </td>
-                              <td>
-                                {startingMeasurement[key as keyof Measurement]}
-                              </td>
-                              <td>
-                                {endingMeasurement[key as keyof Measurement]}
-                              </td>
-                              <td>
-                                {change} ({percentageChange.toFixed(2)} %)
-                              </td>
-                            </tr>
-                          );
-                        }),
-                      ]}
-                    </tbody>
-                  </table>
+                    return (
+                      <div
+                        key={key}
+                        className="w-60 bg-gray-800 text-white p-4 rounded-lg shadow-lg h-40"
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="text-3xl">{emoji}</span>
+                          <span className="text-lg">{label}</span>
+                        </div>
+                        <div className="mt-4">
+                          <p className="text-sm">
+                            Start:{" "}
+                            <span className="font-bold">
+                              {startingMeasurement[key as keyof Measurement]}
+                            </span>
+                          </p>
+                          <p className="text-sm">
+                            Current:{" "}
+                            <span className="font-bold">
+                              {endingMeasurement[key as keyof Measurement]}
+                            </span>
+                          </p>
+                          <p className="text-sm mt-2">
+                            Change:{" "}
+                            {getChangeIndicator(change, percentageChange)}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center mt-20 border-2 py-5 mx-20">
@@ -177,27 +290,185 @@ const Goals: React.FC = () => {
 
               <div className="border-t-2 rounded-full mt-20 mx-10"></div>
 
-              <h1 className="text-4xl font-semibold text-center mt-5">Goals</h1>
+              <h1 className="text-4xl font-semibold text-center mt-5 text-white">
+                Goals
+              </h1>
 
-              <div className="text-center">
-                <div className="flex flex-row justify-center items-center space-x-5 mt-10">
-                  <p>Daily Calorie Target: </p>
+              <div className="flex flex-col items-center mt-20">
+                <div className="flex flex-row space-x-5 w-full justify-center items-center">
+                  <label className="text-xl text-white">
+                    Daily Calorie Goal:{" "}
+                  </label>
                   <input
-                    className="input input-bordered text-sm"
-                    value={userProfile.target_daily_calories}
-                    type="number"
+                    type="range"
+                    min={0}
+                    max={10000}
+                    value={dailyCalorieGoal}
+                    step={1}
+                    className="range range-primary bg-white w-64"
                     onChange={(e) =>
-                      setUserProfile((prev) => ({
-                        ...prev,
-                        target_daily_calories: parseInt(e.target.value),
-                      }))
+                      setDailyCalorieGoal(parseInt(e.target.value))
                     }
-                  ></input>
+                  />
+                  <p className="text-white">{dailyCalorieGoal} kcal</p>
                 </div>
 
-                <button className="btn btn-primary mt-10 w-32" onClick={saveGoals}>
-                  Save
-                </button>
+                <div className="mt-10 flex flex-col w-full items-center">
+                  <h2 className="text-lg text-[#4F19D6]">
+                    Macro Nutrient Breakdown
+                  </h2>
+
+                  <div className="grid grid-cols-2 items-center gap-5 mt-5 bg-gray-500 bg-opacity-30 p-5 rounded-lg">
+                    <label className="text-white">
+                      Carbohydrates ({macroPercentageInputs.carbohydrates}%):{" "}
+                    </label>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={macroPercentageInputs.carbohydrates}
+                      step={1}
+                      className="range range-primary bg-white w-max-64"
+                      onChange={(e) =>
+                        setMacroPercentageInputs({
+                          ...macroPercentageInputs,
+                          carbohydrates: parseInt(e.target.value),
+                        })
+                      }
+                      onMouseDown={() => setShowGoalsSave(false)}
+                      onMouseUp={() => setShowGoalsSave(true)}
+                    />
+
+                    <label className="block text-white">
+                      Proteins ({macroPercentageInputs.proteins}%):{" "}
+                    </label>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={macroPercentageInputs.proteins}
+                      step={1}
+                      className="range range-primary bg-white w-max-64"
+                      onChange={(e) =>
+                        setMacroPercentageInputs({
+                          ...macroPercentageInputs,
+                          proteins: parseInt(e.target.value),
+                        })
+                      }
+                      onMouseDown={() => setShowGoalsSave(false)}
+                      onMouseUp={() => setShowGoalsSave(true)}
+                    />
+
+                    <label className="block text-white">
+                      Fats ({macroPercentageInputs.fats}%):{" "}
+                    </label>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={macroPercentageInputs.fats}
+                      step={1}
+                      className="range range-primary bg-white w-max-64"
+                      onChange={(e) =>
+                        setMacroPercentageInputs({
+                          ...macroPercentageInputs,
+                          fats: parseInt(e.target.value),
+                        })
+                      }
+                      onMouseDown={() => setShowGoalsSave(false)}
+                      onMouseUp={() => setShowGoalsSave(true)}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center m-10">
+                  <h2 className="text-lg text-[#4F19D6]">Pre-built plans</h2>
+
+                  <div className="flex flex-col md:flex-row space-y-5 md:space-x-5 md:space-y-0 items-center justify-center mt-5">
+                    <button className="btn bg-gray-700 bg-opacity-30 w-32 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
+                            onClick={() => setMacroPercentageInputs(prebuitPlans['fat loss'])}>
+                      <h2 className="text-md text-white">Fat Loss</h2>
+                      <FaBurn className="text-red-500 text-3xl"/>
+                    </button>
+
+                    <button className="btn bg-gray-700 bg-opacity-30 w-40 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
+                            onClick={() => setMacroPercentageInputs(prebuitPlans['muscle gain'])}>
+                      <h2 className="text-md text-white">Muscle Gain</h2>
+                      <FaDumbbell className="text-orange-500 text-3xl"/>
+                    </button>
+
+                    <button className="btn bg-gray-700 bg-opacity-30 w-32 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
+                            onClick={() => setMacroPercentageInputs(prebuitPlans['weight loss'])}>
+                      <h2 className="text-md text-white">Weight Loss</h2>
+                      <FaWeight className="text-green-500 text-3xl"/>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Only show submit button and breakdown if the macros percentages add up to 100% */}
+                {showGoalsSave &&
+                  (Object.values(macroPercentageInputs).reduce(
+                    (a, b) => a + b
+                  ) === 100 ? (
+                    <>
+                      <h3 className="mt-10 text-[#4F19D6] text-lg">
+                        Daily Macro Targets
+                      </h3>
+                      <div className="w-full flex flex-col md:flex-row justify-center items-center space-x-20">
+                        <div className="space-y-4 mt-5 bg-gray-500 bg-opacity-30 p-5 rounded-lg">
+                          <div className="flex items-center justify-between p-4 rounded-lg shadow-md text-white space-x-5">
+                            <span className="font-semibold">
+                              Carbohydrates:{" "}
+                            </span>
+                            <span className="text-lg">
+                              {getMacroTargetGrams("carbohydrates")} g
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between p-4  rounded-lg shadow-md text-white space-x-5">
+                            <span className="font-semibold">Proteins: </span>
+                            <span className="text-lg">
+                              {getMacroTargetGrams("proteins")} g
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between p-4 rounded-lg shadow-md text-white space-x-5">
+                            <span className="font-semibold">Fats: </span>
+                            <span className="text-lg">
+                              {getMacroTargetGrams("fats")} g
+                            </span>
+                          </div>
+                        </div>
+
+                        <div>
+                          <PieChart
+                            chartData={{
+                              "Carbohydrates (g)":
+                                getMacroTargetGrams("carbohydrates"),
+                              "Proteins (g)": getMacroTargetGrams("proteins"),
+                              "Fats (g)": getMacroTargetGrams("fats"),
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="w-full flex justify-center mt-10">
+                        <button
+                          type="submit"
+                          className="btn btn-primary w-full max-w-md mt-10 bg-[#4F19D6]"
+                          onClick={handleSubmit}
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div>
+                      <p className="text-lg text-red-500 mt-10">
+                        The percentages must add up to 100%
+                      </p>
+                    </div>
+                  ))}
               </div>
             </div>
           )}

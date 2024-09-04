@@ -1,6 +1,12 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  font-family: 'Roboto' !important
+}
 
 .loader {
   display: flex;
@@ -76,4 +82,22 @@
     transform: scaleY(1);
     transform-origin: 50% 50%;
   }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-bg {
+  background: linear-gradient(270deg, #00ff00, #800080, #ff0000);
+  background-size: 600% 600%;
+  animation: gradient 10s ease;
 }

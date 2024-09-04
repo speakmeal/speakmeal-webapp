@@ -34,8 +34,8 @@ function Subscriptions() {
       .maybeSingle();
 
     if (subscription && !error) {
-      //user already has a subscription, so redirect them to the dashboard page
-      router.push("/Dashboard");
+      //user already has a subscription, so redirect them to the account page
+      router.push("/account");
       setIsLoading(false);
       return;
     }
@@ -67,7 +67,7 @@ function Subscriptions() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 flex flex-col shadow-md">
+    <div className="min-h-screen bg-gradient-to-b bg-black flex flex-col shadow-md">
       {/* Navbar */}
       <nav>
         <div className="container mx-auto p-4 flex justify-between items-center">
@@ -78,22 +78,31 @@ function Subscriptions() {
               width={40}
               height={40}
             />
-            <span className="text-xl font-bold ml-2 text-black">
+            <span className="text-xl font-bold ml-2 text-white">
               Speak Meal
             </span>
           </a>
 
           <button
-            className="btn btn-error rounded-3xl text-white"
+            className="btn btn-primary bg-[#4F19D6] rounded-3xl text-white"
             onClick={() => {
               supabase.auth.signOut();
-              router.push("/");
+              router.push("/dashboard");
             }}
           >
-            Log out
+            Dashboard
           </button>
         </div>
       </nav>
+
+      <h1 className="text-center font-bold text-[#4F19D6] text-4xl mt-10">
+        Upgrade Plan
+      </h1>
+
+      <p className="text-center text-white text-lg px-20 mt-5">
+        Get rid of the credit limit and get unlimited speak credits per month. <br></br>
+        A new level of efficiency awaits you!
+      </p>
 
       {isLoading ? (
         <div className="flex flex-1 justify-center items-center">

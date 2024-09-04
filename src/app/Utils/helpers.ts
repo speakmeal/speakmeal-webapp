@@ -1,4 +1,4 @@
-import type { FoodItem, Tables } from "../types_db";
+import type { FoodItem, Tables, UserDetails } from "../types_db";
 
 /**
  * Stripe / Supabase helpers
@@ -162,4 +162,16 @@ export const getTotals = (items: FoodItem[]) => {
     },
     { carbs_g: 0, protein_g: 0, fat_g: 0, calories: 0 }
   );
+}
+
+
+/**
+ * Server component helpers
+ */
+export const isProfileSetUp = (profile: UserDetails) => {
+  return profile.name !== null && profile.age !== null
+}
+
+export const hasProfileCalorieGoals = (profile: UserDetails) => {
+  return profile.target_daily_calories !== null && profile.carbohydrates_grams_goal !== null && profile.protein_grams_goal !== null && profile.fat_grams_goal !== null;
 }

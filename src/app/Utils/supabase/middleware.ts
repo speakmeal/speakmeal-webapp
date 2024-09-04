@@ -21,9 +21,12 @@ export async function updateSession(req: NextRequest) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
+  await supabase.auth.getUser();
+
+  console.log(req.nextUrl.pathname, session?.refresh_token);
 
   //if requested url is public there is no need to check session
-  const publicUrls = ["/", "/LogIn", "/SignIn", "/PasswordReset", "/api/auth"];
+  const publicUrls = ["/", "/LogIn", "/SignIn", "/PasswordReset", "/api/auth", "/api/stripe/webhook"];
   if (publicUrls.includes(req.nextUrl.pathname)) {
     return res;
   }
@@ -32,26 +35,6 @@ export async function updateSession(req: NextRequest) {
   if (!session) {
     url.pathname = "/LogIn"
     return NextResponse.redirect(url)
-  }
-
-  //if requested url requires subscription, check if teh user has a valid subscription
-  const exclusiveUrls = ["/dashboard", "/logs", "/goals", "/account", '/api/getIngredients', '/api/getMacros'];
-  if (exclusiveUrls.includes(req.nextUrl.pathname)) {
-    const { data: subscription, error } = await supabase
-      .from("subscriptions")
-      .select("*, prices(*, products(*))")
-      .in("status", ["trialing", "active"])
-      .eq("user_id", session?.user.id)
-      .maybeSingle();
-
-    if (
-      !subscription ||
-      error ||
-      (subscription.status !== "active" && subscription.status !== "trialing")
-    ) {
-      url.pathname = "/Subscriptions"
-      return NextResponse.redirect(url);
-    }
   }
 
   //user has valid session and subscription, so there is no need to redirect

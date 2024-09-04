@@ -82,8 +82,7 @@ export default function Pricing({ products }: Props) {
     return (
       <>
         <section>
-          <div>
-            <div className="mt-12 space-y-4 sm:mt-16 sm:space-y-0 flex flex-wrap justify-center gap-6 w-full">
+          <div className="mt-10">
               {products.map((product, index) => {
                 const price = product?.prices?.find(
                   (price) => price.interval === "month"
@@ -98,13 +97,6 @@ export default function Pricing({ products }: Props) {
 
                 return (
                   <div className="w-full" key={index}>
-                    <h1 className="text-center text-3xl md:text-4xl font-bold">
-                      Choose a plan
-                    </h1>
-                    <p className="text-center text-md text-lg mt-2">
-                      Get stated on your journey today with our 7 day free
-                      trial. <br /> No strings attached.{" "}
-                    </p>
                     <PriceBanner
                       name={product.name || ""}
                       descriptionLines={product.description?.split("\\n") || []}
@@ -115,8 +107,7 @@ export default function Pricing({ products }: Props) {
                 );
               })}
             </div>
-          </div>
-        </section>
+          </section>
       </>
     );
   }

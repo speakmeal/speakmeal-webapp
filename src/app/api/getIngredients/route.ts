@@ -1,17 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI, { toFile } from "openai";
+import OpenAI from "openai";
+import { logPaidAPIRequest, validateRequest } from "../utils";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const transcript = body.transcript;
+  // check if request is valid
+  const validationResult = await validateRequest(req);
+  let userId;
 
-  console.log(transcript);
-  //TODO: check user is logged in
+  if (!validationResult[0]) {
+    return NextResponse.json(
+      {
+        message: validationResult[1],
+      },
+      { status: 500 }
+    );
+  } else {
+    userId = validationResult[1];
+  }
+
   try {
+    const { transcript } = await req.json();
     const completion = await openai.chat.completions.create({
       messages: [
         {
@@ -46,11 +58,27 @@ export async function POST(req: NextRequest) {
       model: "gpt-4o",
       response_format: { type: "json_object" },
     });
-    
-    return NextResponse.json({ response: completion.choices[0].message.content });
 
+    //log request made to the database to keep track of free requests
+    const hasLogged = logPaidAPIRequest(userId as string);
+    if (!hasLogged) {
+      console.error("Error logging request");
+      return NextResponse.json(
+        {
+          message: "Error registering API request",
+        },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      response: completion.choices[0].message.content,
+    });
   } catch (error) {
     console.error("Error processing audio:", error);
-    return NextResponse.error();
+    return NextResponse.json(
+      { message: "Error processing the audio" },
+      { status: 500 }
+    );
   }
 }

@@ -103,7 +103,7 @@ export default function Home() {
         <div className="w-full flex justify-center mt-5">
           <img className="w-[90vw] md:w-[70vw] mt-5" src="/assets/background.png" />
         </div>
-xf
+
         <div className="w-full mt-[10vh]" id="features">
           <Features />
         </div>

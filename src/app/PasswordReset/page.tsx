@@ -50,7 +50,7 @@ const PasswordReset: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 flex flex-col shadow-md">
+    <div className="min-h-screen bg-black flex flex-col shadow-md">
       {/* Navbar */}
       <nav>
         <div className="container mx-auto p-4 flex justify-between items-center">
@@ -61,7 +61,7 @@ const PasswordReset: React.FC = () => {
               width={40}
               height={40}
             />
-            <span className="text-xl font-bold ml-2 text-black">
+            <span className="text-xl font-bold ml-2 text-white">
               Speak Meal
             </span>
           </a>
@@ -70,8 +70,8 @@ const PasswordReset: React.FC = () => {
 
       {/* Main Content */}
       <div className="flex-grow flex items-center justify-center">
-        <div className="rounded-lg shadow-lg p-8 w-full max-w-md">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        <div className="rounded-lg shadow-lg p-8 w-full max-w-md border-2 border-gray-600">
+          <h2 className="text-3xl font-bold text-center text-white mb-8">
             Reset Password
           </h2>
           <form onSubmit={(e) => e.preventDefault()}>
@@ -121,11 +121,13 @@ const PasswordReset: React.FC = () => {
             </div>
 
             {isLoading ? (
-              <LoadingIndicator />
+              <div className="text-white">
+                <LoadingIndicator />
+              </div>
             ) : (
               <button
                 type="submit"
-                className="w-full bg-purple-600 text-white py-2 px-4 rounded-full hover:bg-purple-700 transition"
+                className="w-full bg-[#4F19D6] text-white py-2 px-4 rounded-full hover:bg-purple-700 transition"
                 onClick={resetPassword}
               >
                 Reset Password
@@ -136,7 +138,7 @@ const PasswordReset: React.FC = () => {
           <p className="text-center text-gray-600 mt-5">
             Remembered your password?
             <a
-              className="text-purple-600 hover:text-purple-700 font-semibold"
+              className="text-[#4F19D6] hover:text-purple-700 font-semibold"
               href="/SignIn"
             >
               {" "}

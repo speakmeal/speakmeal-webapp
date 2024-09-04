@@ -398,6 +398,9 @@ export interface UserDetails {
   email: string;
   age: number;
   gender: 'Male' | 'Female' | 'Not specified';
+  carbohydrates_grams_goal: number;
+  protein_grams_goal: number;
+  fat_grams_goal: number;
 }
 export const emptyUserDetails: UserDetails = {
   id: '', 
@@ -405,5 +408,8 @@ export const emptyUserDetails: UserDetails = {
   target_daily_calories: 0, 
   email: '', 
   age: 0, 
-  gender: 'Not specified'
+  gender: 'Not specified', 
+  carbohydrates_grams_goal: 0, 
+  protein_grams_goal: 0, 
+  fat_grams_goal: 0
 }

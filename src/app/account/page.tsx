@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import DashSidebar from "../Components/DashSidebar";
 import { Bars3Icon } from "@heroicons/react/24/outline";
-import { FaEdit } from "react-icons/fa";
+import { FaCrown, FaEdit } from "react-icons/fa";
 import { emptyUserDetails, UserDetails } from "../types_db";
 import { createClient } from "../Utils/supabase/client";
 import { useAlert } from "../Components/Alert/useAlert";
@@ -51,14 +51,20 @@ const AccountPage: React.FC = () => {
     setPersonalInfo(profile);
 
     //get the user's subscription
-    const { data: subscription, error } = await supabase
+    const { data: subscription, error: subscriptionError } = await supabase
       .from("subscriptions")
       .select("*, prices(*, products(*))")
       .in("status", ["trialing", "active"])
-      .single();
+      .maybeSingle();
+
+    if (subscriptionError) {
+      triggerAlert(subscriptionError.message, "error");
+      setIsLoading(false);
+      return;
+    }
 
     setPersonalInfo(profile);
-    setPlanName(subscription.prices.products.name);
+    setPlanName(subscription ? subscription.prices.products.name : "Free Plan");
     setIsLoading(false);
   };
 
@@ -130,18 +136,24 @@ const AccountPage: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full min-h-screen">
+    <div className="flex w-full min-h-screen bg-black">
       <DashSidebar
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
         location="/account"
       />
 
+      {showAlert && (
+        <div className="absolute w-full">
+          <Alert message={message} type={type} />
+        </div>
+      )}
+
       {!isSidebarOpen && (
         <div className="flex flex-1 flex-col">
-          <header className="flex justify-between items-center px-6 py-4 rounded-lg m-4">
+          <header className="md:hidden flex justify-between items-center px-6 py-4 rounded-lg m-4 bg-white shadow-md">
             <button className="md:hidden mr-5" onClick={toggleSidebar}>
-              <Bars3Icon className="h-6 w-6 text-black" />
+              <Bars3Icon className="h-6 w-6 text-gray-800" />
             </button>
           </header>
 
@@ -150,29 +162,31 @@ const AccountPage: React.FC = () => {
               <LoadingIndicator />
             </div>
           ) : (
-            <main className="p-6 text-center">
-              <h1 className="text-4xl font-bold text-center mb-10">Account</h1>
+            <main className="p-6">
+              <h1 className="text-4xl font-bold text-center mb-10 text-white">
+                Account
+              </h1>
 
-              <section className="mb-5">
-                <h2 className="text-2xl font-bold mb-4">
+              <section className="mb-10 bg-gray-600 bg-opacity-30 shadow-md rounded-lg p-6">
+                <h2 className="text-2xl font-bold mb-4 text-white">
                   Personal Information
                 </h2>
-                <div className="flex flex-col space-y-5 justify-center items-center w-full">
+                <div className="flex flex-col items-center space-y-5 w-full">
                   {["name", "age"].map((key) => (
-                    <div key={key} className="flex items-center">
-                      <label className="block text-gray-700 w-24 capitalize">
+                    <div key={key} className="flex items-center w-64">
+                      <label className="block text-white w-24 capitalize">
                         {key}:
                       </label>
                       <input
                         type={key === "age" ? "number" : "text"}
-                        value={personalInfo[key as keyof UserDetails]}
+                        value={personalInfo[key as keyof UserDetails] as string}
                         onChange={(e) => handleInputChange(key, e.target.value)}
                         className="input input-bordered w-full"
                         disabled={!isEditing[key as keyof EditState]}
                       />
 
                       <button
-                        className="ml-2 text-blue-500"
+                        className="ml-2 text-[#4F19D6]"
                         onClick={() => handleEdit(key)}
                       >
                         <FaEdit />
@@ -180,12 +194,12 @@ const AccountPage: React.FC = () => {
                     </div>
                   ))}
 
-                  <div key={"sex"} className="flex items-center space-x-5">
-                    <label className="block text-gray-700 w-24 capitalize">
+                  <div key={"sex"} className="flex items-center space-x-5 w-64">
+                    <label className="block text-white w-24 capitalize">
                       Gender:
                     </label>
                     <select
-                      className="select select-bordered max-w-xs"
+                      className="select select-bordered w-full"
                       disabled={!isEditing["gender"]}
                       value={personalInfo["gender"]}
                       onChange={(e) =>
@@ -198,7 +212,7 @@ const AccountPage: React.FC = () => {
                     </select>
 
                     <button
-                      className="ml-2 text-blue-500"
+                      className="ml-2 text-[#4F19D6]"
                       onClick={() => handleEdit("gender")}
                     >
                       <FaEdit />
@@ -206,46 +220,49 @@ const AccountPage: React.FC = () => {
                   </div>
                 </div>
 
-                <button
-                  className="btn btn-primary w-32 mt-5"
-                  onClick={saveChanges}
-                >
+                <button className="btn btn-primary mt-5" onClick={saveChanges}>
                   Save
                 </button>
-                <div className="w-full border-t-4 mt-5 rounded-lg"></div>
               </section>
 
-              <section className="mb-5">
-                <h2 className="text-2xl font-bold mb-4">Account Details</h2>
-                <p className="text-md">
+              <section className="mb-10 rounded-lg p-6 bg-gray-600 bg-opacity-30 shadow-md">
+                <h2 className="text-2xl font-bold mb-4 text-white">
+                  Account Details
+                </h2>
+                <p className="text-md mb-4 text-white">
                   <b>Email:</b> {personalInfo.email}
                 </p>
                 <button
-                  className="text-purple-600 hover:text-purple-700 font-semibold ml-1 underline"
+                  className="text-[#4F19D6] hover:text-red-500 font-semibold underline"
                   onClick={handlePasswordReset}
                 >
                   Reset Password
                 </button>
-
-                <div className="w-full border-t-4 mt-5 rounded-lg"></div>
               </section>
 
-              <section className="mb-5">
-                <h2 className="text-2xl font-bold mb-4">Subscription</h2>
-                <p className="text-md">
-                  <b>Plan:</b> {planName}
-                </p>
-                <button
-                  className="btn btn-primary mt-3"
-                  onClick={handleSubscriptionManagement}
-                >
-                  Manage Subscription
-                </button>
+              <section className="mb-10 bg-gray-600 bg-opacity-30 shadow-md rounded-lg p-6">
+                <h2 className="text-2xl font-bold mb-4 text-white">
+                  Subscription
+                </h2>
+                <p className="text-md mb-4 text-[#4F19D6]">{planName}</p>
 
-                <div className="w-full border-t-4 mt-5 rounded-lg"></div>
+                {planName !== "Free Plan" ? (
+                  <button
+                    className="btn btn-primary"
+                    onClick={handleSubscriptionManagement}
+                  >
+                    Manage Subscription
+                  </button>
+                ) : (
+                  <button className="btn btn-primary"
+                          onClick={() => router.push("/upgrade")}>
+                    <FaCrown />
+                    Upgrade
+                  </button>
+                )}
               </section>
 
-              <div className="flex justify-center mt-5">
+              <div className="flex justify-center">
                 <button className="btn btn-error text-white" onClick={logout}>
                   Log Out
                 </button>
@@ -254,8 +271,6 @@ const AccountPage: React.FC = () => {
           )}
         </div>
       )}
-
-      {showAlert && <Alert message={message} type={type} />}
     </div>
   );
 };

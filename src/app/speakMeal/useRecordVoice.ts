@@ -1,19 +1,21 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { blobToBase64 } from "@/app/Utils/openAI/blobToBase64"
+import { SupabaseClient } from "@supabase/supabase-js";
 
-export const useRecordVoice = () => {
-  const [text, setText] = useState<string>("");
+interface Props {
+  callback: (transcript: string) => Promise<void>;
+  supabase: SupabaseClient
+};
+
+export const useRecordVoice = ({ callback, supabase }: Props) => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [recording, setRecording] = useState<boolean>(false);
-  const isRecording = useRef(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const chunks = useRef([]);
 
   const startRecording = () => {
     if (mediaRecorder) {
-      isRecording.current = true;
       mediaRecorder.start();
       setRecording(true);
     }
@@ -21,7 +23,6 @@ export const useRecordVoice = () => {
 
   const stopRecording = () => {
     if (mediaRecorder) {
-      isRecording.current = false;
       mediaRecorder.stop();
       setRecording(false);
     }
@@ -29,22 +30,27 @@ export const useRecordVoice = () => {
 
   const getText = async (base64data: any) => {
     setIsLoading(true);
+    const session = await supabase.auth.getSession();
 
     try {
       const response = await fetch("/api/speechToText", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.data.session?.access_token}`
         },
         body: JSON.stringify({
           audio: base64data,
         }),
       }).then((res) => res.json());
+
       const { text } = response;
-      setText(text);
+      console.log('Text: ' + text);
+      await callback(text);
       setIsLoading(false);
+
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsLoading(false);
     }
   };
@@ -76,5 +82,5 @@ export const useRecordVoice = () => {
     }
   }, []);
 
-  return { recording, startRecording, stopRecording, text, setText, isLoading };
+  return { recording, startRecording, stopRecording, isLoading };
 };
