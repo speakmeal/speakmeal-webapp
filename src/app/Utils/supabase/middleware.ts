@@ -3,11 +3,12 @@
  * This also checks if the user is logged in and redirects them to the login page if they are not and try to access a protected page
  */
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { permanentRedirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function updateSession(req: NextRequest) {
   let res = NextResponse.next();
-  const url = req.nextUrl.clone()
+  const url = req.nextUrl.clone();
 
   const supabase = createMiddlewareClient(
     { req, res },
@@ -17,24 +18,59 @@ export async function updateSession(req: NextRequest) {
     }
   );
 
-  //get current session / refresh it
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  await supabase.auth.getUser();
-
-  console.log(req.nextUrl.pathname, session?.refresh_token);
-
-  //if requested url is public there is no need to check session
-  const publicUrls = ["/", "/LogIn", "/SignIn", "/PasswordReset", "/api/auth", "/api/stripe/webhook"];
-  if (publicUrls.includes(req.nextUrl.pathname)) {
+  //always allow api requests to pass 
+  if (req.nextUrl.pathname.startsWith("/api")){
     return res;
   }
 
-  //if user is not logged in and tries to access protected url, redirect them to the login page
-  if (!session) {
-    url.pathname = "/LogIn"
-    return NextResponse.redirect(url)
+  //no need to check the session when trying to access public urls
+  const publicUrls = ["/", "/LogIn", "/SignIn", "/PasswordReset"];
+  if (publicUrls.includes(req.nextUrl.pathname))
+    return res;
+
+  //get current session / refresh it
+  const {
+    data: { user },
+    error
+  } = await supabase.auth.getUser();
+
+  //user tried to access private page without being logged in
+  if (!user || error){
+    console.error("Middleware: Error getting the user's session");
+
+    if (error){
+      console.error("Error: " + error.message);
+    }
+
+    url.pathname = "/LogIn";
+    return NextResponse.redirect(url);
+  }
+
+  //no need to check if user has a valid subscription when they try to access the subscriptions page
+  if (req.nextUrl.pathname === "/subscribe"){
+    return res;
+  }
+
+  //check if the user has a valid subscription before letting them access a protected page
+  const { data: userSubscription, error: subError } = await supabase
+    .from("subscriptions")
+    .select("*, prices(*, products(*))")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  console.log(userSubscription);
+  
+  if (!userSubscription || subError){
+    //user does not have a subscription
+    url.pathname = "/subscribe";
+    return NextResponse.redirect(url);
+  }
+
+  console.log(userSubscription)
+
+  if (userSubscription.status !== "active" && userSubscription.status !== "trialing") {
+    //user's subscription has expired
+    url.pathname = "/subscribe";
+    return NextResponse.redirect(url);
   }
 
   //user has valid session and subscription, so there is no need to redirect

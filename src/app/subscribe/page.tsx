@@ -1,7 +1,7 @@
 "use client";
 import { createClient } from "../Utils/supabase/client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAlert } from "../Components/Alert/useAlert";
 import Alert from "../Components/Alert/Alert";
@@ -10,7 +10,7 @@ import Pricing from "./Pricing";
 import { ProductWithPrices, SubscriptionWithProduct } from "../types_db";
 
 //User is signed in, but may or may not have a subscription
-function Subscriptions() {
+const Subscriptions: React.FC = () => {
   const [products, setProducts] = useState<ProductWithPrices[]>([]);
   const [subscription, setSubscription] =
     useState<SubscriptionWithProduct | null>(null);
@@ -84,24 +84,26 @@ function Subscriptions() {
           </a>
 
           <button
-            className="btn btn-primary bg-[#4F19D6] rounded-3xl text-white"
-            onClick={() => {
-              supabase.auth.signOut();
-              router.push("/dashboard");
+            className="btn btn-error rounded-3xl text-white"
+            onClick={ async () => {
+              setIsLoading(true);
+              await supabase.auth.signOut();
+              router.push("/LogIn");
+              setIsLoading(false);
             }}
           >
-            Dashboard
+            Log Out
           </button>
         </div>
       </nav>
 
       <h1 className="text-center font-bold text-[#4F19D6] text-4xl mt-10">
-        Upgrade Plan
+        Subscribe
       </h1>
 
-      <p className="text-center text-white text-lg px-20 mt-5">
-        Get rid of the credit limit and get unlimited speak credits per month. <br></br>
-        A new level of efficiency awaits you!
+      <p className="text-center text-white text-xl px-20 mt-5">
+        Unlock seamless voice meal tracking and personalized insights. <br></br>
+        If you don't like it, no sweat, you get a 3 day free trial. 
       </p>
 
       {isLoading ? (
@@ -117,6 +119,6 @@ function Subscriptions() {
       {showAlert && <Alert message={message} type={type} />}
     </div>
   );
-}
+};
 
 export default Subscriptions;

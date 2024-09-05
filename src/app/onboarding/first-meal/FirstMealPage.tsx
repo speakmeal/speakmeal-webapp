@@ -14,7 +14,6 @@ import { createClient } from "@/app/Utils/supabase/client";
 import MealPage from "@/app/meals/MealPage";
 
 const FirstMealPage: React.FC = () => {
-  const { recording, startRecording, stopRecording, text, setText, isLoading } = useRecordVoice();
   const { showAlert, message, type, triggerAlert } = useAlert();
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [extractedMealData, setExtractedMealData] = useState<Meal | null>(null);
@@ -107,6 +106,8 @@ const FirstMealPage: React.FC = () => {
     setIsPageLoading(false);
   };
 
+  const { recording, startRecording, stopRecording, isLoading } = useRecordVoice({callback: extractMacros, supabase});
+
   const handleMicClick = () => {
     if (recording) {
       stopRecording();
@@ -115,14 +116,6 @@ const FirstMealPage: React.FC = () => {
       startRecording();
     }
   };
-
-  useEffect(() => {
-    // When transcription finishes, extract the macros
-    if (!isLoading && text.length > 0) {
-      extractMacros(text).then(() => setText(""));
-    }
-  }, [text, isLoading, extractMacros, setText]);
-  
 
   if (isPageLoading) {
     return (

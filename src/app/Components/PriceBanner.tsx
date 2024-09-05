@@ -45,7 +45,7 @@ export default function PriceBanner({name, descriptionLines, monthlyPriceString,
                             } else {
                               router.push("/SignIn");
                             }
-                          }}>Upgrade</button>
+                          }}>Subscribe</button>
                 </div>
               </div>
             </div>

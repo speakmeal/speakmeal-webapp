@@ -4,12 +4,10 @@ import { Features } from "./Components/Features";
 import Testimonial from "./Components/Testimonial";
 import PriceBanner from "./Components/PriceBanner";
 import Footer from "./Components/Footer";
-import { permanentRedirect } from "next/navigation";
 
 export default function Home() {
   return (
     <div className="bg-gradient-to-b from-white to-gray-100">
-      {/* Navbar */}
       <nav className="bg-white">
         <div className="container mx-auto p-2 flex justify-between items-center">
           <div className="flex items-center">
@@ -68,7 +66,6 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Main section */}
       <header className="text-center py-24" id="home">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold leading-tight md:leading-snug">
@@ -109,7 +106,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Client reviews */}
       <div className="p-5">
         <h1 className="text-3xl md:text-4xl font-bold text-center">
           What our clients say about us
@@ -141,7 +137,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Pricing section */}
       <div id="pricing">
         <h1 className="text-3xl md:text-4xl font-bold text-center">Pricing</h1>
         <p className="text-center mt-2 text-lg">
@@ -158,7 +153,6 @@ export default function Home() {
           />
       </div>
 
-      {/* Bottom hero section */}
       <div className="py-16">
         <div className="container mx-auto px-4 text-center relative">
           <div className="flex justify-between items-center mb-8">
@@ -205,7 +199,3 @@ export default function Home() {
     </div>
   );
 }
-
-// Add get started section
-//Add footer
-//Setup supabase and add auth
