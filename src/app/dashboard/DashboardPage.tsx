@@ -530,7 +530,7 @@ const DashboardPage: React.FC = () => {
                       </div>
 
                       <p className="mt-2 text-gray-600 text-sm">
-                        {dailyBreakdown.carbs_g} /{" "}
+                        {Math.round(dailyBreakdown.carbs_g)} /{" "}
                         {userData.carbohydrates_grams_goal}g
                       </p>
                       
@@ -554,7 +554,7 @@ const DashboardPage: React.FC = () => {
                       </div>
 
                       <p className="mt-2 text-gray-600 text-sm">
-                        {dailyBreakdown.protein_g} /{" "}
+                        {Math.round(dailyBreakdown.protein_g)} /{" "}
                         {userData.protein_grams_goal}g
                       </p>
                       
@@ -578,7 +578,7 @@ const DashboardPage: React.FC = () => {
                       </div>
 
                       <p className="mt-2 text-gray-600 text-sm">
-                        {dailyBreakdown.fat_g} /{" "}
+                        {Math.round(dailyBreakdown.fat_g)} /{" "}
                         {userData.fat_grams_goal}g
                       </p>
                     </div>
