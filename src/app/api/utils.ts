@@ -31,48 +31,10 @@ export async function validateRequest(req: NextRequest) {
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (subError) {
+  if (subError || !userSubscription) {
     console.log(subError);
     return [false, "Error fetching subscription"];
   }
 
-  // If the user doesn't have a subscription, check their request limit
-  if (!userSubscription) {
-    const { count, error: requestError } = await supabaseServerClient
-      .from("meal_conversions")
-      .select("id", { count: "exact" })
-      .eq("user_id", user.id)
-      .gte(
-        "created_at",
-        new Date(
-          new Date().getFullYear(),
-          new Date().getMonth(),
-          1
-        ).toISOString()
-      ); //only get requests made this month
-
-    if (requestError) {
-      return [false, "Error fetching request count"];
-    }
-
-    // If the number of requests made this month exceeds 5, return an error
-    if (count! >= 5) {
-      return [false, "Request limit reached for this month"];
-    }
-  }
-
   return [true, user.id];
-}
-
-export async function logPaidAPIRequest(userId: string) {
-  const supabaseAdmin = createAdminClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ""
-  );
-
-  const { error } = await supabaseAdmin.from("meal_conversions").insert({
-    user_id: userId,
-  });
-
-  return error ? false : true;
 }

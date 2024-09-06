@@ -11,7 +11,7 @@ import DashNavbar from "../Components/DashNavbar";
 import LoadingIndicator from "../Components/LoadingIndicator";
 import { Meal } from "../types_db";
 import MealPage from "../meals/MealPage";
-import { getMonthlyAICredits, getUserSubscription } from "../Components/utils";
+import { getUserSubscription } from "../Components/utils";
 
 function SpeakMealPage() {
   const supabase = createClient();
@@ -20,8 +20,6 @@ function SpeakMealPage() {
   const { showAlert, message, type, triggerAlert } = useAlert();
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [extractedMealData, setExtractedMealData] = useState<Meal | null>(null);
-  const [planName, setPlanName] = useState<string>("Free Plan");
-  const [aiCredits, setAiCredits] = useState<number>(0);
 
   async function extractMacros(transcript: string) {
     console.log("Transcript: " + transcript);
@@ -126,18 +124,7 @@ function SpeakMealPage() {
       startRecording();
     }
   };
-
-  const onPageLoad = async () => {
-    const planName = await getUserSubscription(supabase);
-    const AICredits = await getMonthlyAICredits(supabase);
-    setPlanName(planName);
-    setAiCredits(AICredits);
-  }
-
-  useEffect(() => {
-    onPageLoad();
-  }, []);
-
+  
   if (isPageLoading) {
     return (
       <div className="h-screen bg-black flex flex-col items-center justify-center">
@@ -175,13 +162,6 @@ function SpeakMealPage() {
             <p className="mt-10 text-gray-500">
               Press the microphone icon to start recording
             </p>
-          </div>
-        )}
-
-        {planName === "Free Plan" && (
-          <div className="flex flex-row space-x-5 mt-10 text-white">
-            <FaCoins />
-            <p>AI Credits: {aiCredits}</p>
           </div>
         )}
       </div>

@@ -18,11 +18,11 @@ type CheckoutResponse = {
   sessionId?: string;
 };
 
-const TRIAL_PERIOD_DAYS = 7; //number of days for the trial period
+const TRIAL_PERIOD_DAYS = 3; //number of days for the trial period
 
 export async function checkoutWithStripe(
   price: Price,
-  redirectPath: string = '/dashboard'
+  redirectPath: string = "/onboarding/first-meal"
 ): Promise<CheckoutResponse> {
   try {
     // Get the user from Supabase auth
@@ -62,7 +62,7 @@ export async function checkoutWithStripe(
           quantity: 1
         }
       ],
-      cancel_url: getURL(),
+      cancel_url: getURL("/subscribe"),
       success_url: getURL(redirectPath)
     };
 

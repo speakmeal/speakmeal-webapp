@@ -65,8 +65,6 @@ export async function updateSession(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  console.log(userSubscription)
-
   if (userSubscription.status !== "active" && userSubscription.status !== "trialing") {
     //user's subscription has expired
     url.pathname = "/subscribe";

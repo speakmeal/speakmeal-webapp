@@ -8,6 +8,8 @@ const FirstMeal: React.FC = async () => {
   const { data: meals, error } = await supabase.from("meal").select("*");
   //row level security ensures that only the meals for the user logged in are retrieved
 
+  console.log("Meals: " + meals);
+
   if (error) {
     console.log(error.message);
     return permanentRedirect("/dashboard");

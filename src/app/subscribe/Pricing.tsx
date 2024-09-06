@@ -33,7 +33,7 @@ export default function Pricing({ products }: Props) {
 
     const { errorRedirect, sessionId } = await checkoutWithStripe(
       price,
-      '/dashboard'
+      '/onboarding/first-meal'
     );
 
     if (errorRedirect) {
@@ -55,8 +55,6 @@ export default function Pricing({ products }: Props) {
 
     const stripe = await getStripe();
     stripe?.redirectToCheckout({ sessionId });
-
-    setIsLoading(false);
   };
 
   if (isLoading) {
@@ -69,7 +67,7 @@ export default function Pricing({ products }: Props) {
     return (
       <>
         <section className="h-screen">
-          <div className="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+          <div className="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8 mt-20">
             <div className="sm:flex sm:flex-col sm:align-center"></div>
             <p className="text-4xl font-extrabold text-white sm:text-center sm:text-6xl">
               No subscriptions available.

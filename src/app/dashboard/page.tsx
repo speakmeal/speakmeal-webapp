@@ -11,7 +11,7 @@ const Dashboard: React.FC = async () => {
         .maybeSingle();
 
     if (error || !profile){
-        //error getting the user's profile, typically when user is not logged in
+        //error getting the user's profile, typically when user is not logged in (should never happen due to middleware)
         if (error){ console.log(error.message) };
         return permanentRedirect("/LogIn");
     }

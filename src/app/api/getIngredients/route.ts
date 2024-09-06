@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import { logPaidAPIRequest, validateRequest } from "../utils";
+import { validateRequest } from "../utils";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -59,22 +59,12 @@ export async function POST(req: NextRequest) {
       response_format: { type: "json_object" },
     });
 
-    //log request made to the database to keep track of free requests
-    const hasLogged = logPaidAPIRequest(userId as string);
-    if (!hasLogged) {
-      console.error("Error logging request");
-      return NextResponse.json(
-        {
-          message: "Error registering API request",
-        },
-        { status: 500 }
-      );
-    }
-
     return NextResponse.json({
       response: completion.choices[0].message.content,
     });
+    
   } catch (error) {
+
     console.error("Error processing audio:", error);
     return NextResponse.json(
       { message: "Error processing the audio" },

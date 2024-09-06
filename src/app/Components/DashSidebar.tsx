@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { FaCoins, FaHome, FaList, FaStar, FaUser } from "react-icons/fa";
 import { createClient } from "../Utils/supabase/client";
-import { getMonthlyAICredits, getUserSubscription } from "./utils";
+import {getUserSubscription } from "./utils";
 
 interface Props {
   isSidebarOpen: boolean;
@@ -15,13 +15,10 @@ interface Props {
 
 function DashSidebar({ isSidebarOpen, toggleSidebar, location }: Props) {
   const supabase = createClient();
-  const [monthlyCredits, setMonthlyCredits] = useState<string>("-");
   const [planName, setPlanName] = useState<string>("Free Plan");
 
   const onPageLoad = async () => {
-    const credits = await getMonthlyAICredits(supabase);
     const plan = await getUserSubscription(supabase);
-    setMonthlyCredits("" + credits);
     setPlanName(plan);
   };
 
@@ -93,20 +90,6 @@ function DashSidebar({ isSidebarOpen, toggleSidebar, location }: Props) {
                 <p>Progress & Goals</p>
               </div>
             </a>
-          </div>
-
-          <div>
-            {/* Only show monthly credits if user has a free plan */}
-            {planName === "Free Plan" && (
-              <a
-                className={`block py-2.5 px-4 hover:text-gray-300 hover:bg-gray-600 hover:bg-opacity-45 rounded-lg mx-5 bg-[#4F19D6]`}
-              >
-                <div className="flex flex-row space-x-5 items-center">
-                  <FaCoins />
-                  <p>AI Credits: {monthlyCredits}</p>
-                </div>
-              </a>
-            )}
           </div>
 
           <div>

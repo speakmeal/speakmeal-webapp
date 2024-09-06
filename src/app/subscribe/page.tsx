@@ -34,10 +34,29 @@ const Subscriptions: React.FC = () => {
       .maybeSingle();
 
     if (subscription && !error) {
-      //user already has a subscription, so redirect them to the account page
-      router.push("/account");
-      setIsLoading(false);
-      return;
+      if (["active", "trialing"].includes(subscription.status)){ //user already has a valid subscription, so redirect them to the account page
+        console.error("User already has subscription");
+        router.push("/account");
+        setIsLoading(false);
+        return;
+      } else { //user has cancelled subscritption so delete it from db to allow new one to be created
+        const { error: subError } = await supabase
+          .from("subscriptions")
+          .delete()
+          .eq("id", subscription.id);
+        
+        const { error: custError } = await supabase
+          .from("customers")
+          .delete()
+          .eq("id", user?.id);
+        
+        if (subError || custError){
+          console.error("Sub error: " + subError);
+          console.error("Customer error: " + custError);
+        } else {
+          console.log("Deleted cancelled subscription");
+        }
+      }
     }
 
     //get all of the available subscription plans

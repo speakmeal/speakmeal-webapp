@@ -35,10 +35,11 @@ export default function RootLayout({
 
 
 //TODO: 
-// Update subscription product description by running webhook locally
 // Test stripe subscription flow 
-//Add credit limit for free users (waiting for confirmation)
-//Improve goals section with sliders, like in the onboarding page + add pre-determined ratios (e.g keto (80% protein, 15% fat, 5% carbs))
+// Remove credit features
+// Test cancelation flow
+// Remove CC from stripe
+// Handle customer deletion event on stripe webhook
+// Fix error with the first meal logging (auth token missing)
 
 //Add bicep measurement
-//Add upgrade button in account page for free users

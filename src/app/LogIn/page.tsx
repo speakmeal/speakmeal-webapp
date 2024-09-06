@@ -53,7 +53,7 @@ const LogIn: React.FC = () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: provider, 
       options: {
-        redirectTo: `${window.location.origin}/LogIn`
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/LogIn`
       }
     });
 
