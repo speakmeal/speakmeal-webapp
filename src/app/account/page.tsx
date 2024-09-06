@@ -151,9 +151,9 @@ const AccountPage: React.FC = () => {
 
       {!isSidebarOpen && (
         <div className="flex flex-1 flex-col">
-          <header className="md:hidden flex justify-between items-center px-6 py-4 rounded-lg m-4 bg-white shadow-md">
+          <header className="md:hidden flex justify-between items-center px-6 py-4 rounded-lg m-4 shadow-md">
             <button className="md:hidden mr-5" onClick={toggleSidebar}>
-              <Bars3Icon className="h-6 w-6 text-gray-800" />
+              <Bars3Icon className="h-6 w-6 text-white" />
             </button>
           </header>
 

@@ -4,14 +4,11 @@ import DashSidebar from "../Components/DashSidebar";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useAlert } from "../Components/Alert/useAlert";
 import LoadingIndicator from "../Components/LoadingIndicator";
-import { emptyUserDetails, Measurement, UserDetails } from "../types_db";
+import { Measurement } from "../types_db";
 import { createClient } from "../Utils/supabase/client";
 import { useRouter } from "next/navigation";
 import Alert from "../Components/Alert/Alert";
-import { formatDate } from "../Utils/helpers";
-import PieChart from "../meals/PieChart";
 import { FaBurn, FaDumbbell, FaWeight } from "react-icons/fa";
-import { FaScaleBalanced } from "react-icons/fa6";
 
 interface MacroPercentageInputs {
   carbohydrates: number;
@@ -217,7 +214,7 @@ const Goals: React.FC = () => {
         <div className="flex flex-1 flex-col">
           <header className="flex justify-between items-center px-6 py-4 rounded-lg m-4">
             <button className="md:hidden mr-5" onClick={toggleSidebar}>
-              <Bars3Icon className="h-6 w-6 text-black" />
+              <Bars3Icon className="h-6 w-6 text-white" />
             </button>
           </header>
 
@@ -288,14 +285,12 @@ const Goals: React.FC = () => {
                 </div>
               )}
 
-              <div className="border-t-2 rounded-full mt-20 mx-10"></div>
-
-              <h1 className="text-4xl font-semibold text-center mt-5 text-white">
+              <h1 className="text-4xl font-semibold text-center mt-20 text-white">
                 Goals
               </h1>
 
-              <div className="flex flex-col items-center mt-20">
-                <div className="flex flex-row space-x-5 w-full justify-center items-center">
+              <div className="flex flex-col items-center mt-5">
+                <div className="flex flex-col md:flex-row space-y-1 md:space-x-5 md:space-y-0 w-full justify-center items-center">
                   <label className="text-xl text-white">
                     Daily Calorie Goal:{" "}
                   </label>
@@ -314,8 +309,8 @@ const Goals: React.FC = () => {
                 </div>
 
                 <div className="mt-10 flex flex-col w-full items-center">
-                  <h2 className="text-lg text-[#4F19D6]">
-                    Macro Nutrient Breakdown
+                  <h2 className="text-xl text-white">
+                    Custom Macro Nutrient Breakdown
                   </h2>
 
                   <div className="grid grid-cols-2 items-center gap-5 mt-5 bg-gray-500 bg-opacity-30 p-5 rounded-lg">
@@ -382,7 +377,7 @@ const Goals: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center m-10">
-                  <h2 className="text-lg text-[#4F19D6]">Pre-built plans</h2>
+                  <h2 className="text-xl text-white">Pre-built Plans</h2>
 
                   <div className="flex flex-col md:flex-row space-y-5 md:space-x-5 md:space-y-0 items-center justify-center mt-5">
                     <button className="btn bg-gray-700 bg-opacity-30 w-32 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
@@ -411,7 +406,7 @@ const Goals: React.FC = () => {
                     (a, b) => a + b
                   ) === 100 ? (
                     <>
-                      <h3 className="mt-10 text-[#4F19D6] text-lg">
+                      <h3 className="mt-10 text-white text-xl">
                         Daily Macro Targets
                       </h3>
                       <div className="w-full flex flex-col md:flex-row justify-center items-center space-x-20">
@@ -439,20 +434,9 @@ const Goals: React.FC = () => {
                             </span>
                           </div>
                         </div>
-
-                        <div>
-                          <PieChart
-                            chartData={{
-                              "Carbohydrates (g)":
-                                getMacroTargetGrams("carbohydrates"),
-                              "Proteins (g)": getMacroTargetGrams("proteins"),
-                              "Fats (g)": getMacroTargetGrams("fats"),
-                            }}
-                          />
-                        </div>
                       </div>
 
-                      <div className="w-full flex justify-center mt-10">
+                      <div className="w-full flex justify-center mt-5 p-5">
                         <button
                           type="submit"
                           className="btn btn-primary w-full max-w-md mt-10 bg-[#4F19D6]"

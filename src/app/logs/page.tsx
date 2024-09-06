@@ -10,7 +10,6 @@ import Alert from "../Components/Alert/Alert";
 import { formatDate, getTotals } from "../Utils/helpers";
 import { useRouter } from "next/navigation";
 import { addDays, subDays } from "date-fns";
-import MealTotalsPieChart from "../meals/PieChart";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import PieChart from "../meals/PieChart";
 
@@ -148,8 +147,8 @@ const Logs: React.FC = () => {
               </div>
 
               {meals.length > 0 ? (
-                <div>
-                  <div className="flex justify-around mt-5">
+                <div className="w-full">
+                  <div className="flex flex-col items-center justify-center md:flex-row md:space-x-5 mt-5">
                     <div className="w-1/2 p-4">
                       <h2 className="text-center text-xl text-white">
                         Macros Breakdown
@@ -160,7 +159,7 @@ const Logs: React.FC = () => {
                       <h2 className="text-center text-xl text-white">
                         Calories Per Meal
                       </h2>
-                      <MealTotalsPieChart
+                      <PieChart
                         chartData={getCaloriesPerMeal().reduce(
                           (acc: any, meal) => ({
                             ...acc,
@@ -172,9 +171,10 @@ const Logs: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="mt-5">
+                  <div className="mt-5 md:w-[80vw] w-screen">
                     <h2 className="p-5 text-white text-xl">Meals</h2>
-                    <div className="overflow-x-auto overflow-y-scroll border-2 rounded-md text-white mx-5">
+
+                    <div className="overflow-x-scroll overflow-y-scroll border-2 rounded-md text-white mx-5">
                       <table className="table">
                         <thead className="text-white">
                           <tr>
@@ -220,11 +220,11 @@ const Logs: React.FC = () => {
             </div>
           )}
 
-          <div className="mt-10">
+          <div className="mt-10 md:w-[80vw] w-screen">
             <h1 className="text-white text-lg p-5">Measurements</h1>
 
             {measurements.length > 0 ? (
-              <div className="overflow-x-auto overflow-y-scroll border-2 rounded-lg text-white ml-5 mb-5">
+              <div className="overflow-x-scroll overflow-y-scroll border-2 rounded-lg text-white mb-5 mx-5">
                 <table className="table">
                   <thead className="text-white">
                     <tr>

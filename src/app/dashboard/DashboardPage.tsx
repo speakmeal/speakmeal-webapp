@@ -335,7 +335,7 @@ const DashboardPage: React.FC = () => {
       />
 
       {!isSidebarOpen && (
-        <div className="flex flex-1 flex-col mr-2">
+        <div className="flex flex-1 flex-col md:flex-row mr-2">
           <header className="flex justify-between items-center px-6 py-4 rounded-lg m-4">
             <button className="md:hidden mr-5" onClick={toggleSidebar}>
               <Bars3Icon className="h-6 w-6 text-white" />
@@ -369,7 +369,7 @@ const DashboardPage: React.FC = () => {
               </div>
 
               <main className="p-4 flex-1">
-                <div className="flex flex-row justify-center">
+                <div className="flex flex-row w-full items-center justify-center">
                   <button
                     className="rounded-lg text-white w-32 h-32 shadow-md m-5 hover:bg-purple-500 bg-opacity-80 gradient-bg flex flex-col justify-center items-center space-y-3"
                     onClick={() => router.push("/speakMeal")}
@@ -379,23 +379,23 @@ const DashboardPage: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="flex flex-row items-center justify-center space-x-5">
+                <div className="flex flex-col md:flex-row items-center justify-center space-x-0 space-y-2 md:space-x-5 md:space-y-0">
                   <button
-                    className="rounded-full bg-[#4F19D6] text-white w-64 py-2 shadow-md m-5 hover:bg-purple-500 bg-opacity-80"
+                    className="rounded-full bg-[#4F19D6] text-white w-64 py-2 shadow-md hover:bg-purple-500 bg-opacity-80"
                     onClick={() => router.push("/meals/new")}
                   >
                     Log Meal
                   </button>
 
                   <button
-                    className="rounded-full bg-[#4F19D6] text-white w-64 py-2 shadow-md m-5 hover:bg-purple-500 bg-opacity-80"
+                    className="rounded-full bg-[#4F19D6] text-white w-64 py-2 shadow-md hover:bg-purple-500 bg-opacity-80"
                     onClick={() => router.push("/measurements/new")}
                   >
                     Log Measurement
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full mt-10">
                   <div className="bg-gray-600 bg-opacity-30 rounded-lg shadow-md p-6">
                     <h2 className="text-xl font-bold text-white">
                       {"Today's Intake"}
