@@ -14,7 +14,7 @@ const NutrientBar = ({ label, value, color }: Props) => {
       <div className="w-full bg-gray-200 rounded-full h-2.5">
         <div
           className={`h-2.5 rounded-full ${color}`}
-          style={{ width: `${Math.min(value, 300)}px` }}
+          style={{ width: `${Math.min((value / 300) * 100, 100)}%` }}
         ></div>
       </div>
     </div>

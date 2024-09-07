@@ -220,12 +220,12 @@ const MealPage: React.FC<Props> = ({ mealDataProp, isNew, hasNavbar, redirect='/
             {isNew ? "New Meal" : formatDate(mealData.created_at)} 
           </h2>
 
-          <div className="flex flex-col space-x-5 justify-center px-5 items-center mt-5">
+          <div className="flex flex-col justify-center items-center mt-5 w-full">
             <div>
               <p className="block text-lg text-white mb-3">Meal Type:</p>
             </div>
 
-            <div className="flex space-x-2">
+            <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
               {mealTypes.map((meal) => {
                 return (
                   <button

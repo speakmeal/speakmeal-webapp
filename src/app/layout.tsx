@@ -36,10 +36,7 @@ export default function RootLayout({
 
 //TODO: 
 // Test stripe subscription flow 
-// Remove credit features
-// Test cancelation flow
-// Remove CC from stripe
 // Handle customer deletion event on stripe webhook
-// Fix error with the first meal logging (auth token missing)
+// Make new meal page responsive on mobile and test speak meal features
 
 //Add bicep measurement

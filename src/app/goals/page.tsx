@@ -442,7 +442,7 @@ const Goals: React.FC = () => {
                           className="btn btn-primary w-full max-w-md mt-10 bg-[#4F19D6]"
                           onClick={handleSubmit}
                         >
-                          Submit
+                          Save
                         </button>
                       </div>
                     </>

@@ -141,7 +141,7 @@ const NewMeasurement: React.FC<RouteParams> = ({
     <div className="min-h-screen bg-black flex flex-col">
       <DashNavbar />
 
-      <div className="flex-grow flex items-center justify-center">
+      <div className="flex-grow flex items-center justify-center m-3 md:m-0">
         <div className="w-full max-w-4xl p-8 bg-gray-600 bg-opacity-30 rounded-lg shadow-md">
           <h2 className="text-4xl font-bold mb-6 text-center text-white">
             New Measurement

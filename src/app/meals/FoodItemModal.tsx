@@ -9,7 +9,7 @@ interface Props {
 
 const FoodItemModal: React.FC<Props> = ({ currentFood, handleInputChange, handleSaveFoodItem, setShowModal}: Props) => {
     return (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 mx-2 md:mx-0">
         <div className="bg-gray-700 p-6 rounded-lg shadow-lg w-full max-w-md">
           <h3 className="text-xl font-bold text-white mb-4">Food item</h3>
           <div className="mb-4">

@@ -509,7 +509,7 @@ const DashboardPage: React.FC = () => {
                       Macro goals
                     </h2>
                     
-                    <div className="grid grid-cols-3 gap-y-5 gap-x-5 items-center mt-7">
+                    <div className="grid grid-cols-3 gap-5 items-center mt-7">
                       {/* Carbs total */}
                       <p className="text-white">Carbohydrates</p>
 
@@ -521,8 +521,9 @@ const DashboardPage: React.FC = () => {
                               100 *
                               Math.min(
                                 1,
-                                dailyBreakdown.carbs_g /
-                                  userData.carbohydrates_grams_goal
+                                Math.max(dailyBreakdown.carbs_g /
+                                         userData.carbohydrates_grams_goal, 
+                                         0.15)
                               )
                             }%`,
                           }}
@@ -545,8 +546,9 @@ const DashboardPage: React.FC = () => {
                               100 *
                               Math.min(
                                 1,
-                                dailyBreakdown.protein_g /
-                                  userData.protein_grams_goal
+                                Math.max(dailyBreakdown.protein_g /
+                                         userData.protein_grams_goal, 
+                                         0.15) 
                               )
                             }%`,
                           }}
@@ -569,8 +571,9 @@ const DashboardPage: React.FC = () => {
                               100 *
                               Math.min(
                                 1,
-                                dailyBreakdown.fat_g /
-                                  userData.fat_grams_goal
+                                Math.max(dailyBreakdown.fat_g /
+                                         userData.fat_grams_goal, 
+                                         0.15)
                               )
                             }%`,
                           }}
