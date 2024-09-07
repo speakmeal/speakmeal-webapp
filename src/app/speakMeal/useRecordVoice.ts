@@ -45,7 +45,7 @@ export const useRecordVoice = ({ callback, supabase }: Props) => {
       }).then((res) => res.json());
 
       const { text } = response;
-      alert('Text: ' + text);
+      console.log('Text: ' + text);
       await callback(text);
       setIsLoading(false);
 
