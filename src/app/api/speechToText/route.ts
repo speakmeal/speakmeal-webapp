@@ -16,20 +16,23 @@ export async function POST(req: NextRequest) {
       {
         message: validationResult[1],
       },
-      { status: 500 }
+      { 
+        status: 500 
+      }
     );
   }
 
   const body = await req.json();
   const base64Audio = body.audio;
+  console.log(base64Audio);
 
   // Convert the base64 audio data to a Buffer
   const audioBuffer = Buffer.from(base64Audio, "base64");
 
   try {
     const response = await openai.audio.transcriptions.create({
-      file: await toFile(audioBuffer, "audio.wav", {
-        type: "audio/wav",
+      file: await toFile(audioBuffer, "", {
+        type: "audio/wav"
       }),
       temperature: 0.1,
       model: "whisper-1", 

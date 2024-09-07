@@ -16,7 +16,7 @@ export const useRecordVoice = ({ callback, supabase }: Props) => {
 
   const startRecording = () => {
     if (mediaRecorder) {
-      mediaRecorder.start();
+      mediaRecorder.start(1000);
       setRecording(true);
     }
   };
@@ -45,7 +45,7 @@ export const useRecordVoice = ({ callback, supabase }: Props) => {
       }).then((res) => res.json());
 
       const { text } = response;
-      console.log('Text: ' + text);
+      alert('Text: ' + text);
       await callback(text);
       setIsLoading(false);
 
