@@ -32,11 +32,11 @@ export default function RootLayout({
 //email: Getspeakmeal@gmail.com
 //password: BigMsSAAS33#
 
+//Github accunt:
+//email: getspeakmeal@gmail.com 
+//password: BigMeals33##
 
 
 //TODO: 
-// Test stripe subscription flow 
-// Handle customer deletion event on stripe webhook
-// Make new meal page responsive on mobile and test speak meal features
 
 //Add bicep measurement
