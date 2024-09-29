@@ -250,7 +250,7 @@ const AccountPage: React.FC = () => {
                     subscription.status === "trialing" ? (
                       <p className="text-green-500">Trial ends on {subscription.trial_end?.split("T")[0]}</p>
                     ) : (
-                      <></>
+                      <div></div>
                       // Bring back once multiple plans are added
                       // <p className="text-green-500">
                       //   {subscription.prices?.products?.name}
