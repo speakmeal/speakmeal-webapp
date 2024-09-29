@@ -9,3 +9,4 @@ export default function Home() {
     router.push("/SignIn");
   }, [])
 }
+
