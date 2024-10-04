@@ -37,6 +37,8 @@ export default function RootLayout({
 //password: BigMeals33##
 
 
-//TODO: 
+//Pushing + deploy to vercel:
+// > git config user.email "getspeakmeal@gmail.com"
+// > git push origin main
 
 //Add bicep measurement
