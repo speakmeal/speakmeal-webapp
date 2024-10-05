@@ -30,7 +30,7 @@ const PasswordReset: React.FC = () => {
 
     setIsLoading(true);
     
-    // Under the hood supabase uses the code query parameter in teh url to identify the user and then resets its password
+    // Under the hood supabase uses the code query parameter in the url to identify the user and then resets its password
     const { error } = await supabase
         .auth
         .updateUser({
@@ -121,9 +121,11 @@ const PasswordReset: React.FC = () => {
             </div>
 
             {isLoading ? (
-              <div className="text-white">
-                <LoadingIndicator />
-              </div>
+              <div
+              className="flex items-center justify-center bg-black text-[#4F19D6] h-16"
+            >
+              <span className="loading loading-ring text-center w-32"></span>
+            </div>
             ) : (
               <button
                 type="submit"

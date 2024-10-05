@@ -74,3 +74,6 @@ export async function updateSession(req: NextRequest) {
   //user has valid session and subscription, so there is no need to redirect
   return res;
 }
+
+
+//>> Checked 
