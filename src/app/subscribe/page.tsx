@@ -121,8 +121,8 @@ const Subscriptions: React.FC = () => {
       </h1>
 
       <p className="text-center text-white text-xl px-20 mt-5">
-        Unlock seamless voice meal tracking and personalized insights. <br></br>
-        If you don&apos;t like it, no sweat, you get a 3 day free trial. 
+        You no longer have an active subscription. <br></br>
+        Subscribe to keep using Speak Meal
       </p>
 
       {isLoading ? (

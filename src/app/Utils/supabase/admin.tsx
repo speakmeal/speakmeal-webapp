@@ -8,7 +8,7 @@ type Product = Tables<'products'>;
 type Price = Tables<'prices'>;
 
 // Change to control trial period length
-const TRIAL_PERIOD_DAYS = 3;
+const TRIAL_PERIOD_DAYS = 0;
 
 const supabaseAdmin = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',

@@ -3,7 +3,13 @@ import { useEffect, useState } from "react";
 import DashSidebar from "../Components/DashSidebar";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { FaCrown, FaEdit } from "react-icons/fa";
-import { emptyUserDetails, Subscription, SubscriptionWithProduct, UserDetails } from "../types_db";
+import {
+  emptyUserDetails,
+  Subscription,
+  SubscriptionWithProduct,
+  TRIAL_PERIOD_DAYS,
+  UserDetails,
+} from "../types_db";
 import { createClient } from "../Utils/supabase/client";
 import { useAlert } from "../Components/Alert/useAlert";
 import Alert from "../Components/Alert/Alert";
@@ -30,7 +36,9 @@ const AccountPage: React.FC = () => {
   });
   const [personalInfo, setPersonalInfo] =
     useState<UserDetails>(emptyUserDetails);
-  const [subscription, setSubscription] = useState<SubscriptionWithProduct | null>(null);
+  const [subscription, setSubscription] =
+    useState<SubscriptionWithProduct | null>(null);
+  const [trialEndDate, setTrialEndDate] = useState<Date | null>(null);
   const { showAlert, message, type, triggerAlert } = useAlert();
 
   const router = useRouter();
@@ -38,6 +46,17 @@ const AccountPage: React.FC = () => {
 
   //get user's profile from the database
   const loadDetails = async () => {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    //get the trial end date
+    const userCreationDate = new Date(user?.created_at || "");
+    const trialEndDate = new Date(userCreationDate);
+    trialEndDate.setDate(trialEndDate.getDate() + TRIAL_PERIOD_DAYS);
+    setTrialEndDate(trialEndDate);
+
     const { data: profile, error: profileError } = await supabase
       .from("users")
       .select("*")
@@ -241,31 +260,23 @@ const AccountPage: React.FC = () => {
               </section>
 
               <section className="mb-10 bg-gray-600 bg-opacity-30 shadow-md rounded-lg p-6">
-                <h2 className="text-2xl font-bold text-white">
-                  Subscription
-                </h2>
+                <h2 className="text-2xl font-bold text-white">Subscription</h2>
                 {/* <p className="text-md mb-4 text-[#4F19D6]">{planName}</p> (Bring back when multiple plans are added) */}
                 {
-                  subscription && (
-                    subscription.status === "trialing" ? (
-                      <p className="text-green-500">Trial ends on {subscription.trial_end?.split("T")[0]}</p>
-                    ) : (
-                      <div></div>
-                      // Bring back once multiple plans are added
-                      // <p className="text-green-500">
-                      //   {subscription.prices?.products?.name}
-                      // </p>
-                    )
-                  )
-                }
+                subscription ? (
+                  <button
+                    className="btn btn-primary mt-5"
+                    onClick={handleSubscriptionManagement}
+                  >
+                    Manage Subscription
+                  </button>
+                ) : (
+                  <p className="text-[#4F19D6] mt-2 font-bold">
+                    Trial ends on {trialEndDate?.toDateString()}
+                  </p>
+                )}
 
                 {/* {isTrialing && <p className="text-green-500">Trialing</p>} */}
-                <button
-                  className="btn btn-primary mt-5"
-                  onClick={handleSubscriptionManagement}
-                >
-                  Manage Subscription
-                </button>
               </section>
 
               <div className="flex justify-center">

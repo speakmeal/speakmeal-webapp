@@ -413,3 +413,6 @@ export const emptyUserDetails: UserDetails = {
   protein_grams_goal: 0, 
   fat_grams_goal: 0
 }
+
+//constant: duration of trial in days
+export const TRIAL_PERIOD_DAYS = 3;

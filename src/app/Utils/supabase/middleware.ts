@@ -2,8 +2,8 @@
  * Utility function to refresh the session tokens and update the cookies of the incoming request
  * This also checks if the user is logged in and redirects them to the login page if they are not and try to access a protected page
  */
+import { TRIAL_PERIOD_DAYS } from "@/app/types_db";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-import { permanentRedirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function updateSession(req: NextRequest) {
@@ -52,12 +52,22 @@ export async function updateSession(req: NextRequest) {
   }
 
   //check if the user has a valid subscription before letting them access a protected page
+
+  //1. If user was created less than 3 days ago, (trial period), allow them to access every page
+  const creationDate = new Date(user.created_at);
+  const now = new Date();
+
+  if (now.getTime() - creationDate.getTime() < TRIAL_PERIOD_DAYS * 24 * 60 * 60 * 1000){
+    return res;
+  }
+
+  //2. If user was created more than 3 days ago, trial period has expired, hence must check subscription.
+  //If user does not have a valid subscription force them to get one by redirecting them to the subscription page
   const { data: userSubscription, error: subError } = await supabase
     .from("subscriptions")
     .select("*, prices(*, products(*))")
     .eq("user_id", user.id)
     .maybeSingle();
-  console.log(userSubscription);
   
   if (!userSubscription || subError){
     //user does not have a subscription
@@ -65,7 +75,7 @@ export async function updateSession(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (userSubscription.status !== "active" && userSubscription.status !== "trialing") {
+  if (userSubscription.status !== "active") {
     //user's subscription has expired
     url.pathname = "/subscribe";
     return NextResponse.redirect(url);
@@ -74,6 +84,3 @@ export async function updateSession(req: NextRequest) {
   //user has valid session and subscription, so there is no need to redirect
   return res;
 }
-
-
-//>> Checked 
