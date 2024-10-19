@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FaCoins, FaMicrophone } from "react-icons/fa";
+import { FaCoins, FaMicrophone, FaMicrophoneAlt } from "react-icons/fa";
 import { useRecordVoice } from "./useRecordVoice";
 import { useAlert } from "../Components/Alert/useAlert";
 import Alert from "../Components/Alert/Alert";
@@ -146,10 +146,10 @@ function SpeakMealPage() {
           <button
             onClick={handleMicClick}
             className={`${
-              recording ? "bg-red-500" : "bg-[#4F19D6]"
+              recording ? "bg-red-500" : "bg-[#53ac00]"
             } rounded-full w-32 h-32 text-white text-4xl flex flex-col items-center justify-center`}
           >
-            <FaMicrophone />
+            <FaMicrophoneAlt />
           </button>
         </div>
 
@@ -159,8 +159,8 @@ function SpeakMealPage() {
           </div>
         ) : (
           <div>
-            <p className="mt-10 text-gray-500">
-              Press the microphone icon to start recording
+            <p className="mt-10 text-gray-400 text-2xl font-bold">
+              Speak now
             </p>
           </div>
         )}

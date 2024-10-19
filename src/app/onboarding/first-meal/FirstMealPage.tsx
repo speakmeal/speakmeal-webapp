@@ -3,12 +3,12 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaMicrophone } from "react-icons/fa";
-import Logo from "../../../../public/assets/logo.png";
+import Logo from "../../../../public/assets/logo.png"; // Make sure this path is correct
 import { useRecordVoice } from "@/app/speakMeal/useRecordVoice";
 import LoadingIndicator from "@/app/Components/LoadingIndicator";
 import { useAlert } from "@/app/Components/Alert/useAlert";
 import Alert from "@/app/Components/Alert/Alert";
-import { FoodItem, Meal } from "@/app/types_db";
+import { Meal } from "@/app/types_db";
 import AudioWaveform from "@/app/speakMeal/AudioWaveform";
 import { createClient } from "@/app/Utils/supabase/client";
 import MealPage from "@/app/meals/MealPage";
@@ -19,7 +19,10 @@ const FirstMealPage: React.FC = () => {
   const [extractedMealData, setExtractedMealData] = useState<Meal | null>(null);
   const router = useRouter();
   const supabase = createClient();
-  const { recording, startRecording, stopRecording, isLoading } = useRecordVoice({ callback: extractMacros, supabase: supabase });
+  const { recording, startRecording, stopRecording, isLoading } = useRecordVoice({
+    callback: extractMacros,
+    supabase: supabase,
+  });
 
   async function extractMacros(transcript: string) {
     console.log("Transcript: " + transcript);
@@ -32,7 +35,6 @@ const FirstMealPage: React.FC = () => {
     setIsPageLoading(true);
     const session = await supabase.auth.getSession();
 
-    // Send request to endpoint that uses OpenAI API to extract ingredients from transcript
     const response = await fetch("/api/getIngredients", {
       method: "POST",
       headers: {
@@ -58,7 +60,6 @@ const FirstMealPage: React.FC = () => {
     const foodData = await Promise.all(
       foods.map(async (item: any) => {
         try {
-          // Get the macros for each item from nutritionix api
           const nutriResp = await fetch("/api/getMacros", {
             method: "POST",
             headers: {
@@ -73,18 +74,13 @@ const FirstMealPage: React.FC = () => {
             throw new Error("Error fetching nutrition data");
           }
 
-          // Use portion sizes to get the macro totals
           const { macros } = await nutriResp.json();
-          const portion_number =
-            parseFloat(item.weight) / parseFloat(macros.serving_weight_grams); // Get number of portions eaten by user
+          const portion_number = parseFloat(item.weight) / parseFloat(macros.serving_weight_grams);
 
           return {
             food_name: `${macros.food_name} - ${item.dose} (${item.weight}g)`,
-            protein_g:
-              Math.round(100 * macros.nf_protein * portion_number) / 100, // Round macros to 2 d.p
-            carbs_g:
-              Math.round(100 * macros.nf_total_carbohydrate * portion_number) /
-              100,
+            protein_g: Math.round(100 * macros.nf_protein * portion_number) / 100,
+            carbs_g: Math.round(100 * macros.nf_total_carbohydrate * portion_number) / 100,
             fat_g: Math.round(100 * macros.nf_total_fat * portion_number) / 100,
             calories: Math.round(macros.nf_calories * portion_number),
           };
@@ -104,9 +100,6 @@ const FirstMealPage: React.FC = () => {
       data: { user },
     } = await supabase.auth.getUser();
 
-    
-
-    // Save the meal data to the local state
     setExtractedMealData({
       id: -1,
       created_at: "",
@@ -142,62 +135,65 @@ const FirstMealPage: React.FC = () => {
     <div className="flex flex-col h-screen bg-black">
       {showAlert && <Alert message={message} type={type} />}
 
-      {/* Logo */}
-      <div className="flex flex-row items-center justify-center space-x-10 mt-10">
-        <h1 className="text-6xl font-bold text-[#4F19D6]">
-          Welcome to <br />
-          SpeakMeal
-        </h1>
-        <img src={Logo.src} alt="App Logo" className="w-24" />
+      {/* Logo - Top Right */}
+      <div className="absolute top-5 right-5">
+        <img src={Logo.src} alt="Logo" className="w-12 h-12 object-contain" />
       </div>
 
-      {/* Call to action */}
-      <div className="flex flex-col items-center mt-[20vh] flex-1">
+      {/* Welcome Text */}
+      <div className="text-center mt-10 md:mt-20">
+        <h1 className="text-3xl text-[#4F19D6] md:p-10 p-5">
+          Hello 👋 <br />Welcome to SpeakMeal
+        </h1>
+        <h2 className="text-white text-2xl md:text-3xl">Log your first meal with your voice</h2>
+      </div>
+
+      {/* Call to Action */}
+      <div className="flex flex-col items-center mt-20 md:mt-32 flex-1">
         <div>
           <button
             onClick={handleMicClick}
             className={`${
-              recording ? "bg-red-500" : "bg-[#4F19D6]"
-            } rounded-full w-32 h-32 text-white text-4xl flex flex-col items-center justify-center`}
+              recording ? "bg-red-500" : "bg-[#53ac00]"
+            } rounded-full w-32 h-32 md:w-40 md:h-40 text-white text-4xl flex flex-col items-center justify-center transition-transform duration-200 ease-in-out hover:scale-110`}
           >
             <FaMicrophone />
           </button>
         </div>
 
         {recording ? (
-          <div className="w-full">
+          <div className="w-full mt-5">
             <AudioWaveform />
           </div>
         ) : (
           <div>
-            <p className="mt-10 text-gray-500 text-xl font-bold text-center">
-              Press the microphone icon to start <br></br>recording your first
-              meal
+            <p className="mt-10 text-white text-2xl md:text-3xl font-bold">
+              Speak now
             </p>
           </div>
         )}
       </div>
 
-      {/* Skip button */}
-      <button
-        className="mt-6 text-lg hover:text-gray-300 pb-5 text-[#4F19D6]"
-        onClick={() => router.push("/onboarding/measurement")}
-      >
-        Skip
-      </button>
+      {/* Skip Button */}
+      <div className="text-center pb-10">
+        <button
+          className="mt-6 text-lg md:text-xl hover:text-gray-300 text-[#4F19D6]"
+          onClick={() => router.push("/onboarding/measurement")}
+        >
+          Skip
+        </button>
+      </div>
 
-      {/* Pop up with the new meal */}
+      {/* Meal Summary Popup */}
       {extractedMealData !== null && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-1 overflow-y-scroll">
-          <div className="overflow-y-scroll">
-            <div>
-              <button
-                className="btn btn-error mt-3 ml-5 text-white"
-                onClick={() => setExtractedMealData(null)}
-              >
-                Try Again
-              </button>
-            </div>
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-80 overflow-y-auto p-4">
+          <div className="bg-white p-6 rounded-lg">
+            <button
+              className="btn btn-error mb-4 text-white"
+              onClick={() => setExtractedMealData(null)}
+            >
+              Try Again
+            </button>
             <MealPage
               mealDataProp={extractedMealData}
               isNew={true}
