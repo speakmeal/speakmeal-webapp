@@ -15,7 +15,7 @@ const FirstMeal: React.FC = async () => {
     return permanentRedirect("/dashboard");
   }
 
-  if (meals && meals.length < 0) {
+  if (meals && meals.length > 0) { 
     //user has already recorded a meal, hence redirect them to the dashboard
     return permanentRedirect("/dashboard");
   }

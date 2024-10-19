@@ -1,10 +1,11 @@
 "use client";
+import React, { useState } from "react";
 import Alert from "@/app/Components/Alert/Alert";
 import { useAlert } from "@/app/Components/Alert/useAlert";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import LoadingIndicator from "@/app/Components/LoadingIndicator";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/app/Utils/supabase/client";
+import Logo from "../../../../public/assets/logo.png"; // Adjust path if necessary
 
 interface FormData {
   height: string;
@@ -44,14 +45,16 @@ const FirstMeasurementPage: React.FC = () => {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const { error } = await supabase.from("measurement").insert({
-      user_id: user?.id,
-      weight_kg: parseFloat(formData.weight),
-      height_cm: parseFloat(formData.height),
-      abdomen_cm: parseFloat(formData.abdomen),
-      hip_cm: parseFloat(formData.hip),
-      chest_cm: parseFloat(formData.chest),
-    });
+    const { error } = await supabase
+      .from("measurement")
+      .insert({
+        user_id: user?.id,
+        weight_kg: parseFloat(formData.weight),
+        height_cm: parseFloat(formData.height),
+        abdomen_cm: parseFloat(formData.abdomen),
+        hip_cm: parseFloat(formData.hip),
+        chest_cm: parseFloat(formData.chest),
+      });
 
     if (error) {
       triggerAlert(error.message, "error");
@@ -74,16 +77,21 @@ const FirstMeasurementPage: React.FC = () => {
     <div className="h-screen flex flex-col justify-between bg-black p-8">
       {showAlert && <Alert message={message} type={type} />}
 
-      {/* Logo and Header */}
+      {/* Logo - Top Right */}
+      <div className="absolute top-5 right-5">
+        <img src={Logo.src} alt="Logo" className="w-12 h-12 object-contain" />
+      </div>
+
+      {/* Header */}
       <div className="flex flex-col items-center mt-10">
-        <h1 className="text-5xl md:text-6xl font-bold text-[#4F19D6] text-center">
+        <h1 className="text-4xl md:text-6xl font-bold text-[#4F19D6] text-center">
           Log Your First <br /> Measurement
         </h1>
       </div>
 
       {/* Form */}
-      <div className="flex flex-col items-center mt-10 bg-gray-600 bg-opacity-30 rounded-lg shadow-md p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center w-full max-w-lg">
+      <div className="flex flex-col items-center mt-10 bg-opacity-40 rounded-lg shadow-md p-6 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
           <div className="w-full">
             <label className="block text-white">Height (cm): </label>
             <input
@@ -93,7 +101,7 @@ const FirstMeasurementPage: React.FC = () => {
               onChange={(e) =>
                 setFormData({ ...formData, height: e.target.value })
               }
-              className="input input-bordered w-full"
+              className="input input-bordered w-full bg-gray-800 text-white"
             />
           </div>
 
@@ -106,7 +114,7 @@ const FirstMeasurementPage: React.FC = () => {
               onChange={(e) =>
                 setFormData({ ...formData, weight: e.target.value })
               }
-              className="input input-bordered w-full"
+              className="input input-bordered w-full bg-gray-800 text-white"
             />
           </div>
 
@@ -119,7 +127,7 @@ const FirstMeasurementPage: React.FC = () => {
               onChange={(e) =>
                 setFormData({ ...formData, abdomen: e.target.value })
               }
-              className="input input-bordered w-full"
+              className="input input-bordered w-full bg-gray-800 text-white"
             />
           </div>
 
@@ -132,7 +140,7 @@ const FirstMeasurementPage: React.FC = () => {
               onChange={(e) =>
                 setFormData({ ...formData, hip: e.target.value })
               }
-              className="input input-bordered w-full"
+              className="input input-bordered w-full bg-gray-800 text-white"
             />
           </div>
 
@@ -145,15 +153,16 @@ const FirstMeasurementPage: React.FC = () => {
               onChange={(e) =>
                 setFormData({ ...formData, chest: e.target.value })
               }
-              className="input input-bordered w-full"
+              className="input input-bordered w-full bg-gray-800 text-white"
             />
           </div>
         </div>
 
-        <div className="w-full flex justify-center">
+        {/* Submit Button */}
+        <div className="w-full flex justify-center mt-10">
           <button
             type="submit"
-            className="btn btn-primary w-full max-w-md mt-10 bg-[#4F19D6]"
+            className="btn btn-primary w-full max-w-md bg-[#4F19D6] text-white text-lg hover:bg-[#3b14a6] transition-all duration-300"
             onClick={saveMeasurement}
           >
             Submit
@@ -164,7 +173,7 @@ const FirstMeasurementPage: React.FC = () => {
       {/* Skip Button */}
       <div className="flex flex-row justify-center mt-10 mb-4">
         <button
-          className="text-md text-[#4F19D6] hover:text-gray-300"
+          className="text-lg text-[#4F19D6] hover:text-gray-300 transition-all duration-300"
           onClick={() => router.push("/onboarding/profile")}
         >
           Skip
