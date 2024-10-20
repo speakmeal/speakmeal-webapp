@@ -11,7 +11,6 @@ const CaloriesGoal: React.FC = async () => {
         .maybeSingle();
 
     if (error){
-        console.log(error.message);
         return permanentRedirect("/dashboard");
     }
 
