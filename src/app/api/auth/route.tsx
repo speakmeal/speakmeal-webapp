@@ -5,7 +5,8 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 export const dynamic = 'force-dynamic';
 
 /**
- * Given request with email confirmation code, authenticate the user and redirect them to the dashboard
+ * Given request with email confirmation code, authenticate the user and redirect them to the dashboard 
+ * NOTE: email verification is currently not in use
  */
 export async function GET(req: NextRequest) {
   // Instantiates a new instance of supabase, route handler variation
