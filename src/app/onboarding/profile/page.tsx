@@ -18,7 +18,7 @@ const ProfilePage: React.FC = async () => {
         return permanentRedirect('/dashboard');
     }
 
-    if (profile){
+    if (!profile){
         //user already has a profile, so redirect them to the dashboard
         if (isProfileSetUp(profile)){
             return permanentRedirect("/dashboard");

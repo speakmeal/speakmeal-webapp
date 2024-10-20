@@ -84,7 +84,7 @@ const FirstMeasurementPage: React.FC = () => {
 
       {/* Header */}
       <div className="flex flex-col items-center mt-10">
-        <h1 className="text-4xl md:text-6xl font-bold text-[#4F19D6] text-center">
+        <h1 className="text-4xl md:text-6xl font-bold text-[#53ac00] text-center">
           Log Your First <br /> Measurement
         </h1>
       </div>
@@ -162,7 +162,7 @@ const FirstMeasurementPage: React.FC = () => {
         <div className="w-full flex justify-center mt-10">
           <button
             type="submit"
-            className="btn btn-primary w-full max-w-md bg-[#4F19D6] text-white text-lg hover:bg-[#3b14a6] transition-all duration-300"
+            className="btn w-full max-w-md bg-[#53ac00] text-white text-lg hover:text-blue-500 transition-all duration-300"
             onClick={saveMeasurement}
           >
             Submit
@@ -173,7 +173,7 @@ const FirstMeasurementPage: React.FC = () => {
       {/* Skip Button */}
       <div className="flex flex-row justify-center mt-10 mb-4">
         <button
-          className="text-lg text-[#4F19D6] hover:text-gray-300 transition-all duration-300"
+          className="text-lg text-[#53ac00] hover:text-gray-300 transition-all duration-300"
           onClick={() => router.push("/onboarding/profile")}
         >
           Skip

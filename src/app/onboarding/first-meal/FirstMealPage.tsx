@@ -142,7 +142,7 @@ const FirstMealPage: React.FC = () => {
 
       {/* Welcome Text */}
       <div className="text-center mt-10 md:mt-20">
-        <h1 className="text-3xl text-[#4F19D6] md:p-10 p-5">
+        <h1 className="text-3xl text-[#53ac00] md:p-10 p-5">
           Hello 👋 <br />Welcome to SpeakMeal
         </h1>
         <h2 className="text-white text-2xl md:text-3xl">Log your first meal with your voice</h2>
@@ -177,7 +177,7 @@ const FirstMealPage: React.FC = () => {
       {/* Skip Button */}
       <div className="text-center pb-10">
         <button
-          className="mt-6 text-lg md:text-xl hover:text-gray-300 text-[#4F19D6]"
+          className="mt-6 text-lg md:text-xl hover:text-gray-300 text-[#53ac00]"
           onClick={() => router.push("/onboarding/measurement")}
         >
           Skip
