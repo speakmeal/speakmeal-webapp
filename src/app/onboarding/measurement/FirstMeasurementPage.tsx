@@ -74,7 +74,7 @@ const FirstMeasurementPage: React.FC = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col justify-between bg-black p-8">
+    <div className="min-h-screen flex flex-col justify-between bg-black p-8">
       {showAlert && <Alert message={message} type={type} />}
 
       {/* Logo - Top Right */}
@@ -171,7 +171,7 @@ const FirstMeasurementPage: React.FC = () => {
       </div>
 
       {/* Skip Button */}
-      <div className="flex flex-row justify-center mt-10 mb-4">
+      <div className="flex flex-row justify-center mt-2 mb-4">
         <button
           className="text-lg text-[#53ac00] hover:text-gray-300 transition-all duration-300"
           onClick={() => router.push("/onboarding/profile")}

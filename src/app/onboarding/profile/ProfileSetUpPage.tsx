@@ -63,7 +63,7 @@ const ProfileSetUpPage: React.FC = () => {
   }
   
   return (
-    <div className="h-screen flex flex-col justify-between bg-black p-8">
+    <div className="min-h-screen flex flex-col justify-between bg-black p-8">
       {showAlert && <Alert message={message} type={type} />}
 
       {/* Logo - Top Right */}
