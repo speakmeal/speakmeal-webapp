@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/Utils/supabase/server";
 import { createClient as createAdminClient, SupabaseClient } from "@supabase/supabase-js";
+import { TRIAL_PERIOD_DAYS } from "../types_db";
 
 export async function validateRequest(req: NextRequest) {
   /**
@@ -22,6 +23,14 @@ export async function validateRequest(req: NextRequest) {
   if (error || !user) {
     return [false, "Invalid user"];
   }
+
+
+  //if user's account was created less than 3 days ago, they have a free trial, so no need to check subscription
+  const creationDate = new Date(user.created_at);
+  const now = new Date();
+  if (now.getTime() - creationDate.getTime() < TRIAL_PERIOD_DAYS * 24 * 60 * 60 * 1000){
+    return [true, user.id];
+  } 
 
   // check if the request made by the user is within the limits of their subscription
   // free users only get 12 Open AI requests for free

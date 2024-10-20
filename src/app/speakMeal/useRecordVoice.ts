@@ -14,10 +14,12 @@ export const useRecordVoice = ({ callback, supabase }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const chunks = useRef([]);
 
-  const startRecording = () => {
+  const startRecording = (triggerAlert: (message: string, type: string) => void ) => {
     if (mediaRecorder) {
       mediaRecorder.start(1000);
       setRecording(true);
+    } else {
+      triggerAlert("Could not find a microphone", "error");
     }
   };
 

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { FaMicrophone } from "react-icons/fa";
+import { FaMicrophone, FaMicrophoneAlt } from "react-icons/fa";
 import Logo from "../../../../public/assets/logo.png"; // Make sure this path is correct
 import { useRecordVoice } from "@/app/speakMeal/useRecordVoice";
 import LoadingIndicator from "@/app/Components/LoadingIndicator";
@@ -19,10 +19,7 @@ const FirstMealPage: React.FC = () => {
   const [extractedMealData, setExtractedMealData] = useState<Meal | null>(null);
   const router = useRouter();
   const supabase = createClient();
-  const { recording, startRecording, stopRecording, isLoading } = useRecordVoice({
-    callback: extractMacros,
-    supabase: supabase,
-  });
+  const { recording, startRecording, stopRecording, isLoading } = useRecordVoice({ callback: extractMacros, supabase: supabase });
 
   async function extractMacros(transcript: string) {
     console.log("Transcript: " + transcript);
@@ -115,11 +112,16 @@ const FirstMealPage: React.FC = () => {
   }
 
   const handleMicClick = () => {
+    console.log("Mic click");
+    console.log(recording);
+
     if (recording) {
       stopRecording();
       setIsPageLoading(true);
     } else {
-      startRecording();
+      console.log("Starting recording ...");
+      startRecording(triggerAlert);
+      console.log(recording);
     }
   };
 
@@ -157,18 +159,19 @@ const FirstMealPage: React.FC = () => {
               recording ? "bg-red-500" : "bg-[#53ac00]"
             } rounded-full w-32 h-32 md:w-40 md:h-40 text-white text-4xl flex flex-col items-center justify-center transition-transform duration-200 ease-in-out hover:scale-110`}
           >
-            <FaMicrophone />
+            <FaMicrophoneAlt />
           </button>
         </div>
 
         {recording ? (
-          <div className="w-full mt-5">
+          <div className="w-full mt-5 text-center">
+            <p className="mt-10 text-white text-xl font-bold">Speak Now</p>
             <AudioWaveform />
           </div>
         ) : (
           <div>
-            <p className="mt-10 text-white text-2xl md:text-3xl font-bold">
-              Speak now
+            <p className="mt-10 text-gray-400 text-lg">
+              Press microphone to record your meal
             </p>
           </div>
         )}

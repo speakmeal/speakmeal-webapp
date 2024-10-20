@@ -47,8 +47,7 @@ const SignIn: React.FC = () => {
     setEmail("");
     setPassword("");
 
-    //successful sign up
-    setIsLoading(false);
+    //successful sign up    
     // triggerAlert(
     //   "We've just sent you a confirmation email. Please check your inbox",
     //   "success",

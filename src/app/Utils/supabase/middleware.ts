@@ -59,7 +59,8 @@ export async function updateSession(req: NextRequest) {
 
   if (now.getTime() - creationDate.getTime() < TRIAL_PERIOD_DAYS * 24 * 60 * 60 * 1000){
     return res;
-  }
+  } 
+  console.log("More than 3 days");
 
   //2. If user was created more than 3 days ago, trial period has expired, hence must check subscription.
   //If user does not have a valid subscription force them to get one by redirecting them to the subscription page

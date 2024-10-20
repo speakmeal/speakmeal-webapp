@@ -11,12 +11,10 @@ import DashNavbar from "../Components/DashNavbar";
 import LoadingIndicator from "../Components/LoadingIndicator";
 import { Meal } from "../types_db";
 import MealPage from "../meals/MealPage";
-import { getUserSubscription } from "../Components/utils";
 
 function SpeakMealPage() {
   const supabase = createClient();
-  const { recording, startRecording, stopRecording, isLoading } =
-    useRecordVoice({ callback: extractMacros, supabase: supabase });
+  const { recording, startRecording, stopRecording, isLoading } = useRecordVoice({ callback: extractMacros, supabase: supabase });
   const { showAlert, message, type, triggerAlert } = useAlert();
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [extractedMealData, setExtractedMealData] = useState<Meal | null>(null);
@@ -121,7 +119,7 @@ function SpeakMealPage() {
       stopRecording();
       setIsPageLoading(true);
     } else {
-      startRecording();
+      startRecording(triggerAlert);
     }
   };
   
@@ -154,13 +152,14 @@ function SpeakMealPage() {
         </div>
 
         {recording ? (
-          <div className="w-full">
+          <div className="w-full text-center mt-5">
             <AudioWaveform />
+            <p className="mt-10 text-white text-xl font-bold">Speak Now</p>
           </div>
         ) : (
           <div>
-            <p className="mt-10 text-gray-400 text-2xl font-bold">
-              Speak now
+            <p className="mt-10 text-gray-400 text-lg font-bold">
+              Press microphone to start recording
             </p>
           </div>
         )}
