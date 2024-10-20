@@ -54,7 +54,7 @@ const SignIn: React.FC = () => {
     //   "success",
     //   5000
     // );
-    router.push("/dashboard");
+    router.push("/onboarding/first-meal"); //redirect user to the onboarding flow automatically
   };
 
   /**
