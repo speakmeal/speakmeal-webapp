@@ -165,21 +165,21 @@ function SpeakMealPage() {
         )}
       </div>
 
+      {/* Meal Summary Popup */}
       {extractedMealData !== null && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-1 overflow-y-scroll">
-          <div className="overflow-y-scroll">
-            <div>
-              <button
-                className="btn btn-error mt-3 ml-5 text-white"
-                onClick={() => setExtractedMealData(null)}
-              >
-                Try Again
-              </button>
-            </div>
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-80 overflow-y-auto md:p-4">
+          <div className="bg-black md:p-6 rounded-lg">
+            <button
+              className="btn btn-error mb-4 text-white m-5"
+              onClick={() => setExtractedMealData(null)}
+            >
+              Try Again
+            </button>
             <MealPage
               mealDataProp={extractedMealData}
               isNew={true}
               hasNavbar={false}
+              redirect="/onboarding/measurement"
             />
           </div>
         </div>
