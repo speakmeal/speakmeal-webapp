@@ -49,11 +49,12 @@ const SignIn: React.FC = () => {
 
     //successful sign up
     setIsLoading(false);
-    triggerAlert(
-      "We've just sent you a confirmation email. Please check your inbox",
-      "success",
-      5000
-    );
+    // triggerAlert(
+    //   "We've just sent you a confirmation email. Please check your inbox",
+    //   "success",
+    //   5000
+    // );
+    router.push("/dashboard");
   };
 
   /**
