@@ -215,7 +215,7 @@ const MealPage: React.FC<Props> = ({ mealDataProp, isNew, hasNavbar, redirect='/
           {showAlert && <Alert message={message} type={type} />}
         </div>
 
-        <div className="p-6 bg-gray-600 bg-opacity-30 rounded-lg shadow-md m-4">
+        <div className="p-6 bg-gray-600 bg-opacity-30 rounded-lg shadow-md md:m-4">
           <h2 className="text-4xl font-bold mb-4 text-center text-white">
             {isNew ? "New Meal" : formatDate(mealData.created_at)} 
           </h2>

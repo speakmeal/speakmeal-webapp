@@ -189,10 +189,10 @@ const FirstMealPage: React.FC = () => {
 
       {/* Meal Summary Popup */}
       {extractedMealData !== null && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-80 overflow-y-auto p-4">
-          <div className="bg-white p-6 rounded-lg">
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-80 overflow-y-auto md:p-4">
+          <div className="bg-black md:p-6 rounded-lg">
             <button
-              className="btn btn-error mb-4 text-white"
+              className="btn btn-error mb-4 text-white m-5"
               onClick={() => setExtractedMealData(null)}
             >
               Try Again
