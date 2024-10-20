@@ -19,18 +19,10 @@ const PasswordReset: React.FC = () => {
   const supabase = createClient();
   const router = useRouter();
 
-  const searchParams = useSearchParams();
-  const accessToken = searchParams.get("access_token");
-
   /**
    * Allow users to reset their password using access_token from query params
    */
   const resetPassword = async () => {
-    if (!accessToken) {
-      triggerAlert("Access token is missing. Please check your reset link.", "error");
-      return;
-    }
-
     if (newPassword.length < 8) {
       triggerAlert("Password must be at least 8 characters long", "error");
       return;
@@ -43,7 +35,7 @@ const PasswordReset: React.FC = () => {
 
     setIsLoading(true);
 
-    // Supabase resets password using the token in the query params
+    //supabase automatically performs auth using token in the url's access_token query parameter
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
     });
