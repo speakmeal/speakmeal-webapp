@@ -135,7 +135,7 @@ const ProfileSetUpPage: React.FC = () => {
       </div>
 
       {/* Skip Button */}
-      <div className="flex flex-row justify-center mt-10 mb-4">
+      <div className="flex flex-row justify-center mt-2 mb-4">
         <button
           className="text-lg text-[#53ac00] hover:text-gray-300 transition-all duration-300"
           onClick={() => router.push("/onboarding/calories-goal")}

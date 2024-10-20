@@ -202,7 +202,7 @@ const MealPage: React.FC<Props> = ({ mealDataProp, isNew, hasNavbar, redirect='/
   }
 
   return (
-    <div className="bg-black min-h-screen flex flex-col">
+    <div className="bg-black min-h-screen flex flex-col w-full">
       <div className="flex-grow">
 
         {hasNavbar && (
