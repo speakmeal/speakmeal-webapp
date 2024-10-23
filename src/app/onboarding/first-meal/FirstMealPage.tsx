@@ -177,11 +177,11 @@ const FirstMealPage: React.FC = () => {
               </p>
             </div>
             <p className="text-gray-300 mt-4 text-center">
-              Just speak your meal and we'll do the rest.<br></br>
+              Just speak your meal and we&apos;ll do the rest.<br></br>
             </p>
             <div className="mt-2 p-4 bg-gray-700 rounded-md">
               <p className="text-gray-400 italic text-center">
-                Example: "For breakfast I had 2 eggs, a bowl of cereal with milk, and a banana"
+                Example: &quot;For breakfast I had 2 eggs, a bowl of cereal with milk, and a banana&quot;
               </p>
             </div>
           </div>

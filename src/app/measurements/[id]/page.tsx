@@ -181,7 +181,7 @@ const NewMeasurement: React.FC<RouteParams> = ({
                   value={feet}
                   onChange={(e) => setFeet(e.target.value)}
                 />
-                <p className="text-white">'</p> 
+                <p className="text-white">&apos;</p> 
                 <input
                   type="number"
                   className="input input-bordered w-32"
@@ -189,7 +189,7 @@ const NewMeasurement: React.FC<RouteParams> = ({
                   value={inches}
                   onChange={(e) => setInches(e.target.value)}
                 />
-                <p className="text-white">''</p>
+                <p className="text-white">&apos;&apos;</p>
               </div>
             </div>
 
