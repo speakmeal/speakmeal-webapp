@@ -229,11 +229,11 @@ const Logs: React.FC = () => {
                   <thead className="text-white">
                     <tr>
                       <th>Date</th>
-                      <th>Weight (kg)</th>
-                      <th>Height (cm)</th>
-                      <th>Abdomen (cm)</th>
-                      <th>Hip (cm)</th>
-                      <th>Chest (cm)</th>
+                      <th>Weight (lbs)</th>
+                      <th>Height (inches)</th>
+                      <th>Abdomen (inches)</th>
+                      <th>Hip (inches)</th>
+                      <th>Chest (inches)</th>
                     </tr>
                   </thead>
 
@@ -245,11 +245,11 @@ const Logs: React.FC = () => {
                         onClick={() => router.push(`/measurements/${measurement.id}`)}
                       >
                         <td>{formatDate(measurement.created_at)}</td>
-                        <td>{measurement.weight_kg.toFixed(2)}</td>
-                        <td>{measurement.height_cm.toFixed(2)}</td>
-                        <td>{measurement.abdomen_cm.toFixed(2)}</td>
-                        <td>{measurement.hip_cm.toFixed(2)}</td>
-                        <td>{measurement.chest_cm.toFixed(2)}</td>
+                        <td>{measurement.weight_pounds.toFixed(2)}</td>
+                        <td>{measurement.height_inches.toFixed(2)}</td>
+                        <td>{measurement.abdomen_inches.toFixed(2)}</td>
+                        <td>{measurement.hip_inches.toFixed(2)}</td>
+                        <td>{measurement.chest_inches.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>

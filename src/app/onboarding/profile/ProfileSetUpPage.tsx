@@ -76,11 +76,8 @@ const ProfileSetUpPage: React.FC = () => {
         <h1 className="text-4xl md:text-6xl font-bold text-[#53ac00] text-center">
           Complete Your <br /> Profile
         </h1>
-      </div>
-
-      {/* Form */}
-      <div className="flex flex-col items-center mt-10 bg-opacity-40 rounded-lg shadow-md p-6 w-full">
-        <h1 className="text-2xl font-semibold text-white mb-4">Your Information</h1>
+    
+        <h1 className="text-2xl font-semibold text-white mb-4 mt-20">Your Information</h1>
 
         <div className="grid grid-cols-1 gap-6 max-w-5xl mt-5">
           <div className="w-full">
@@ -132,16 +129,6 @@ const ProfileSetUpPage: React.FC = () => {
             Submit
           </button>
         </div>
-      </div>
-
-      {/* Skip Button */}
-      <div className="flex flex-row justify-center mt-2 mb-4">
-        <button
-          className="text-lg text-[#53ac00] hover:text-gray-300 transition-all duration-300"
-          onClick={() => router.push("/onboarding/calories-goal")}
-        >
-          Skip
-        </button>
       </div>
     </div>
   );

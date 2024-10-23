@@ -9,7 +9,7 @@ import { emptyMeasurement, Measurement } from "@/app/types_db";
 import DashNavbar from "@/app/Components/DashNavbar";
 import LoadingIndicator from "@/app/Components/LoadingIndicator";
 
-//note that when a new measurement is being created, the id is set to 'new'
+// Note that when a new measurement is being created, the id is set to 'new'
 interface Params {
   id: string;
 }
@@ -17,11 +17,14 @@ interface Params {
 interface RouteParams {
   params: Params;
 }
+
 const NewMeasurement: React.FC<RouteParams> = ({
   params: { id },
 }: RouteParams) => {
   const [measurementVals, setMeasurementVals] =
     useState<Measurement>(emptyMeasurement);
+  const [feet, setFeet] = useState<string>(""); // For height input in feet
+  const [inches, setInches] = useState<string>(""); // For height input in inches
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { showAlert, message, type, triggerAlert } = useAlert();
@@ -29,48 +32,64 @@ const NewMeasurement: React.FC<RouteParams> = ({
   const router = useRouter();
   const supabase = createClient();
 
-  /**
-   * Save new measurement to the database or edit an existing one
-   */
+  // Save new measurement to the database or edit an existing one
   const saveMeasurement = async () => {
     setIsLoading(true);
 
-    //if id = 'new' insert a new measurement 
+    // Convert height from feet + inches to total inches
+    const totalHeightInches = parseInt(feet || "0") * 12 + parseInt(inches || "0");
+
+    // Ensure optional fields are defaulted to zero if not entered
+    const abdomen_inches = measurementVals.abdomen_inches || 0;
+    const chest_inches = measurementVals.chest_inches || 0;
+    const hip_inches = measurementVals.hip_inches || 0;
+
+    if (!measurementVals.weight_pounds || measurementVals.weight_pounds <= 0){
+      triggerAlert("You must enter a valid weight", "error");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!totalHeightInches || totalHeightInches <= 0){
+      triggerAlert("You must enter a valid height", "error");
+      setIsLoading(false);
+      return;
+    }
+
+    // If id = 'new', insert a new measurement
     if (id === "new") {
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
-      const { error } = await supabase
-        .from("measurement")
-        .insert({
-          weight_kg: measurementVals.weight_kg, 
-          height_cm: measurementVals.height_cm, 
-          chest_cm: measurementVals.chest_cm, 
-          abdomen_cm: measurementVals.abdomen_cm, 
-          hip_cm: measurementVals.hip_cm,
-          user_id: user?.id
-      })
+      const { error } = await supabase.from("measurement").insert({
+        weight_pounds: measurementVals.weight_pounds, // Now pounds
+        height_inches: totalHeightInches,
+        chest_inches: chest_inches,
+        abdomen_inches: abdomen_inches,
+        hip_inches: hip_inches,
+        user_id: user?.id,
+      });
 
-      if (error){
+      if (error) {
         triggerAlert(error.message, "error");
         setIsLoading(false);
         return;
       }
     } else {
-      //if id != 'new' update the previous measurement
+      // If id != 'new', update the previous measurement
       const { error } = await supabase
         .from("measurement")
         .update({
-          weight_kg: measurementVals.weight_kg, 
-          height_cm: measurementVals.height_cm, 
-          chest_cm: measurementVals.chest_cm, 
-          abdomen_cm: measurementVals.abdomen_cm, 
-          hip_cm: measurementVals.hip_cm
+          weight_pounds: measurementVals.weight_pounds,
+          height_inches: totalHeightInches,
+          chest_inches: chest_inches,
+          abdomen_inches: abdomen_inches,
+          hip_inches: hip_inches,
         })
-        .eq('id', measurementVals.id);
+        .eq("id", measurementVals.id);
 
-      if (error){
+      if (error) {
         triggerAlert(error.message, "error");
         setIsLoading(false);
         return;
@@ -80,7 +99,7 @@ const NewMeasurement: React.FC<RouteParams> = ({
     router.push("/dashboard");
   };
 
-  //delete existing measurement from the database
+  // Delete existing measurement from the database
   const deleteMeasurement = async () => {
     setIsLoading(true);
     const { error } = await supabase
@@ -94,18 +113,16 @@ const NewMeasurement: React.FC<RouteParams> = ({
       return;
     }
 
-    //meal was deleted successfully, so redirect the user to the logs section
+    // Measurement was deleted successfully, redirect to logs
     router.push("/logs");
   };
 
-
-  //load measurement data on page load if necessary
+  // Load measurement data on page load if necessary
   const onPageLoad = async () => {
     setIsPageLoading(true);
 
     if (!isNaN(parseInt(id))) {
-      //if id is a valid number, then user wants to edit existing measurement
-      //hence, load the information for the meal selected
+      // If id is a valid number, then the user wants to edit an existing measurement
       const { data: measurement, error: measurementError } = await supabase
         .from("measurement")
         .select("*")
@@ -119,8 +136,13 @@ const NewMeasurement: React.FC<RouteParams> = ({
       }
 
       setMeasurementVals(measurement);
+      // Split the height_inches back into feet and inches for input
+      const feetVal = Math.floor(measurement.height_inches / 12);
+      const inchesVal = measurement.height_inches % 12;
+      setFeet(feetVal.toString());
+      setInches(inchesVal.toString());
     } else {
-      //id is some text that is not /new (invalid)
+      // If id is some text that is not /new (invalid)
       if (id !== "new") {
         router.push("/dashboard");
       }
@@ -147,83 +169,94 @@ const NewMeasurement: React.FC<RouteParams> = ({
             New Measurement
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col items-center justify-center space-y-5">
+            {/* Height input (feet + inches) */}
             <div className="form-control">
-              <label className="label text-white">Height (cm):</label>
+              <label className="label text-white">Height:</label>
+              <div className="flex space-x-2 items-center">
+                <input
+                  type="number"
+                  className="input input-bordered w-32"
+                  placeholder="Feet"
+                  value={feet}
+                  onChange={(e) => setFeet(e.target.value)}
+                />
+                <p className="text-white">'</p> 
+                <input
+                  type="number"
+                  className="input input-bordered w-32"
+                  placeholder="Inches"
+                  value={inches}
+                  onChange={(e) => setInches(e.target.value)}
+                />
+                <p className="text-white">''</p>
+              </div>
+            </div>
+
+            {/* Weight input (pounds) */}
+            <div className="form-control flex flex-row space-x-5">
+              <label className="label text-white">Weight (pounds):</label>
               <input
                 type="number"
-                className="input input-bordered w-full"
-                value={measurementVals.height_cm}
+                className="input input-bordered w-32"
+                value={measurementVals.weight_pounds}
                 onChange={(e) =>
-                  setMeasurementVals((prev: Measurement) => ({
+                  setMeasurementVals((prev) => ({
                     ...prev,
-                    height_cm: parseFloat(e.target.value),
+                    weight_pounds: parseFloat(e.target.value),
                   }))
                 }
               />
             </div>
 
-            <div className="form-control">
-              <label className="label text-white">Weight (kg):</label>
+            {/* Optional fields (abdomen, hip, chest) */}
+            <div className="form-control flex flex-row space-x-5">
+              <label className="label text-white">Abdomen (inches):</label>
               <input
                 type="number"
-                className="input input-bordered w-full"
-                value={measurementVals.weight_kg}
+                className="input input-bordered w-32"
+                value={measurementVals.abdomen_inches || ""}
                 onChange={(e) =>
                   setMeasurementVals((prev) => ({
                     ...prev,
-                    weight_kg: parseFloat(e.target.value),
+                    abdomen_inches: parseFloat(e.target.value) || 0,
                   }))
                 }
               />
             </div>
 
-            <div className="form-control">
-              <label className="label text-white">Abdomen (cm):</label>
+            <div className="form-control flex flex-row space-x-5">
+              <label className="label text-white">Hip (inches):</label>
               <input
                 type="number"
-                className="input input-bordered w-full"
-                value={measurementVals.abdomen_cm}
+                className="input input-bordered w-32"
+                value={measurementVals.hip_inches || ""}
                 onChange={(e) =>
                   setMeasurementVals((prev) => ({
                     ...prev,
-                    abdomen_cm: parseFloat(e.target.value),
+                    hip_inches: parseFloat(e.target.value) || 0,
                   }))
                 }
               />
             </div>
 
-            <div className="form-control">
-              <label className="label text-white">Hip (cm):</label>
+            <div className="form-control flex flex-row space-x-5">
+              <label className="label text-white">Chest (inches):</label>
               <input
                 type="number"
-                className="input input-bordered w-full"
-                value={measurementVals.hip_cm}
+                className="input input-bordered w-32"
+                value={measurementVals.chest_inches || ""}
                 onChange={(e) =>
                   setMeasurementVals((prev) => ({
                     ...prev,
-                    hip_cm: parseFloat(e.target.value),
-                  }))
-                }
-              />
-            </div>
-
-            <div className="form-control">
-              <label className="label text-white">Chest (cm):</label>
-              <input
-                type="number"
-                className="input input-bordered w-full"
-                value={measurementVals.chest_cm}
-                onChange={(e) =>
-                  setMeasurementVals((prev) => ({
-                    ...prev,
-                    chest_cm: parseFloat(e.target.value),
+                    chest_inches: parseFloat(e.target.value) || 0,
                   }))
                 }
               />
             </div>
           </div>
 
+          {/* Save/Delete Buttons */}
           <div className="mt-6 text-center w-full">
             {!isLoading ? (
               <div className="flex flex-row space-x-5 justify-center items-center">

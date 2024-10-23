@@ -41,7 +41,7 @@ const LogIn: React.FC = () => {
     }
 
     //redirect user to dashboard after successful log in
-    router.push("/dashboard");
+    router.push("/speakMeal");
   };
 
   /**

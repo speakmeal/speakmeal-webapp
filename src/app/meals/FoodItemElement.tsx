@@ -15,7 +15,7 @@ const FoodItemElement = ({ item, index, handleEditFoodItem, handleDeleteFoodItem
   
     return (
       <div className="bg-white rounded-lg shadow-lg p-5 w-full max-w-md mx-auto">
-        <div className="flex justify-between items-center mb-3">
+        <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold">{item.food_name}</h3>
           <div className="flex space-x-2">
             <button
@@ -32,6 +32,8 @@ const FoodItemElement = ({ item, index, handleEditFoodItem, handleDeleteFoodItem
             </button>
           </div>
         </div>
+
+        <p className="text-tl font-bold my-1 text-[#53ac00]">{item.calories} kcal</p>
         <button
           className="flex items-center text-gray-700"
           onClick={() => setShowNutrition(!showNutrition)}
@@ -44,7 +46,6 @@ const FoodItemElement = ({ item, index, handleEditFoodItem, handleDeleteFoodItem
             <NutrientBar label="Carbohydrates (g)" value={item.carbs_g} color="bg-blue-500" />
             <NutrientBar label="Protein (g)" value={item.protein_g} color="bg-green-500" />
             <NutrientBar label="Fat (g)" value={item.fat_g} color="bg-red-500" />
-            <NutrientBar label="Calories" value={item.calories} color="bg-yellow-500" />
           </div>
         </div>
       </div>

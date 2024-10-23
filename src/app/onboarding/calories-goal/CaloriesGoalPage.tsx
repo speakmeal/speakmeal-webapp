@@ -7,6 +7,8 @@ import { useAlert } from "@/app/Components/Alert/useAlert";
 import { createClient } from "@/app/Utils/supabase/client";
 import LoadingIndicator from "@/app/Components/LoadingIndicator";
 import PieChart from "@/app/meals/PieChart";
+import { prebuitPlans } from "@/app/types_db";
+import { FaBurn, FaDumbbell, FaWeight } from "react-icons/fa";
 
 interface MacroPercentageInputs {
   carbohydrates: number;
@@ -92,7 +94,7 @@ const CaloriesGoalPage: React.FC = () => {
 
       {/* Title */}
       <div className="flex flex-col items-center">
-        <h1 className="text-xl md:text-5xl font-bold text-[#4F19D6] text-center">
+        <h1 className="text-xl md:text-5xl font-bold text-[#53ac00] text-center">
           Targets
         </h1>
 
@@ -181,6 +183,40 @@ const CaloriesGoalPage: React.FC = () => {
           </div>
         </div>
 
+        <div className="flex flex-col items-center m-10">
+          <h2 className="text-xl text-white">Pre-built Plans</h2>
+
+          <div className="flex flex-col md:flex-row space-y-5 md:space-x-5 md:space-y-0 items-center justify-center mt-5">
+            <button
+              className="btn bg-gray-700 bg-opacity-30 w-32 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
+              onClick={() => setMacroPercentageInputs(prebuitPlans["fat loss"])}
+            >
+              <h2 className="text-md text-white">Fat Loss</h2>
+              <FaBurn className="text-red-500 text-3xl" />
+            </button>
+
+            <button
+              className="btn bg-gray-700 bg-opacity-30 w-40 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
+              onClick={() =>
+                setMacroPercentageInputs(prebuitPlans["muscle gain"])
+              }
+            >
+              <h2 className="text-md text-white">Muscle Gain</h2>
+              <FaDumbbell className="text-orange-500 text-3xl" />
+            </button>
+
+            <button
+              className="btn bg-gray-700 bg-opacity-30 w-32 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
+              onClick={() =>
+                setMacroPercentageInputs(prebuitPlans["weight loss"])
+              }
+            >
+              <h2 className="text-md text-white">Weight Loss</h2>
+              <FaWeight className="text-green-500 text-3xl" />
+            </button>
+          </div>
+        </div>
+
         {/* Only show submit button and breakdown if the macros percentages add up to 100% */}
         {showSubmit &&
           (Object.values(macroPercentageInputs).reduce((a, b) => a + b) ===
@@ -198,7 +234,9 @@ const CaloriesGoalPage: React.FC = () => {
 
                   <div className="flex items-center justify-between p-4  rounded-lg shadow-md text-white space-x-5">
                     <span className="font-semibold">Proteins: </span>
-                    <span className="text-lg">{getMacroTarget("proteins")} g</span>
+                    <span className="text-lg">
+                      {getMacroTarget("proteins")} g
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-between p-4 rounded-lg shadow-md text-white space-x-5">
@@ -210,17 +248,18 @@ const CaloriesGoalPage: React.FC = () => {
                 <div>
                   <PieChart
                     chartData={{
-                      'Carbohydrates (g)': getMacroTarget('carbohydrates'), 
-                      'Proteins (g)': getMacroTarget('proteins'), 
-                      'Fats (g)': getMacroTarget('fats')
-                    }} />
+                      "Carbohydrates (g)": getMacroTarget("carbohydrates"),
+                      "Proteins (g)": getMacroTarget("proteins"),
+                      "Fats (g)": getMacroTarget("fats"),
+                    }}
+                  />
                 </div>
               </div>
 
               <div className="w-full flex justify-center mt-10">
                 <button
                   type="submit"
-                  className="btn btn-primary w-full max-w-md mt-10 bg-[#4F19D6]"
+                  className="btn btn-primary w-full max-w-md mt-10 bg-[#53ac00]"
                   onClick={handleSubmit}
                 >
                   Submit

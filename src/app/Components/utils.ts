@@ -15,3 +15,11 @@ export async function getUserSubscription(supabase: SupabaseClient) {
   }
   return subscription ? subscription.prices.products.name : "Free Plan";
 }
+
+  /**
+   * Convert numeric inches measurement to <feet>'<inches>'' string
+   * @param inches 
+   */
+  export const inchesToFeet = (inches: number) => {
+    return `${Math.floor(inches / 12)}'${inches % 12}''`
+  }

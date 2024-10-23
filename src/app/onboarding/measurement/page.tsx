@@ -18,7 +18,7 @@ const FirstMeasurement: React.FC = async () => {
 
   console.log(measurements);
 
-  if (measurements && measurements.length > 0) {
+  if (measurements && measurements.length < 0) {
     //user has already recorded a measurement, hence redirect them to the dashboard
     return permanentRedirect("/dashboard");
   }

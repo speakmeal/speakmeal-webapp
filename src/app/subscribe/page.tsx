@@ -7,7 +7,7 @@ import { useAlert } from "../Components/Alert/useAlert";
 import Alert from "../Components/Alert/Alert";
 import LoadingIndicator from "../Components/LoadingIndicator";
 import Pricing from "./Pricing";
-import { ProductWithPrices, SubscriptionWithProduct } from "../types_db";
+import { ProductWithPrices, SubscriptionWithProduct, TRIAL_PERIOD_DAYS } from "../types_db";
 
 //User is signed in, but may or may not have a subscription
 const Subscriptions: React.FC = () => {
@@ -22,10 +22,22 @@ const Subscriptions: React.FC = () => {
   const supabase = createClient();
 
   const onPageLoad = async () => {
-    //check if the user already has a subscripton
     const {
       data: { user },
     } = await supabase.auth.getUser();
+
+    if (!user){
+      console.error("Could not get user");
+      return;
+    }
+
+    //if user is still trialing, redirect them to their account
+    const creationDate = new Date(user.created_at);
+    const now = new Date();
+    if (now.getTime() - creationDate.getTime() < TRIAL_PERIOD_DAYS * 24 * 60 * 60 * 1000){
+      router.push("/account");
+      return;
+    } 
 
     const { data: subscription, error } = await supabase
       .from("subscriptions")
@@ -37,7 +49,6 @@ const Subscriptions: React.FC = () => {
       if (["active", "trialing"].includes(subscription.status)){ //user already has a valid subscription, so redirect them to the account page
         console.error("User already has subscription");
         router.push("/account");
-        setIsLoading(false);
         return;
       } else { //user has cancelled subscritption so delete it from db to allow new one to be created
         const { error: subError } = await supabase
@@ -121,8 +132,7 @@ const Subscriptions: React.FC = () => {
       </h1>
 
       <p className="text-center text-white text-xl px-20 mt-5">
-        You no longer have an active subscription. <br></br>
-        Subscribe to keep using Speak Meal
+        Your free trial has expired <br></br> Subscribe to continue recording your calories & meals with unlimited access
       </p>
 
       {isLoading ? (

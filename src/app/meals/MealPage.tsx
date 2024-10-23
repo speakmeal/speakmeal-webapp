@@ -12,16 +12,22 @@ import PieChart from "./PieChart";
 import FoodItemModal from "./FoodItemModal";
 
 interface Props {
-    mealDataProp: Meal;
-    isNew: boolean;
-    hasNavbar: boolean;
-    redirect?: string;
+  mealDataProp: Meal;
+  isNew: boolean;
+  hasNavbar: boolean;
+  redirect?: string;
 }
 
-
-const MealPage: React.FC<Props> = ({ mealDataProp, isNew, hasNavbar, redirect='/dashboard' }: Props) => {
+const MealPage: React.FC<Props> = ({
+  mealDataProp,
+  isNew,
+  hasNavbar,
+  redirect = "/dashboard",
+}: Props) => {
   const [mealData, setMealData] = useState<Meal>(mealDataProp); //determine the type of meal being added
-  const [foodItems, setFoodItems] = useState<FoodItem[]>(mealDataProp.food_item); //list of foot items added to the list
+  const [foodItems, setFoodItems] = useState<FoodItem[]>(
+    mealDataProp.food_item
+  ); //list of foot items added to the list
 
   const [currentFood, setCurrentFood] = useState<FoodItem>(emptyFoodItem); //food item being edited / created
   const [editingIndex, setEditingIndex] = useState<number | null>(null); //index of food item being edited / created
@@ -204,11 +210,10 @@ const MealPage: React.FC<Props> = ({ mealDataProp, isNew, hasNavbar, redirect='/
   return (
     <div className="bg-black min-h-screen flex flex-col w-full">
       <div className="flex-grow">
-
         {hasNavbar && (
-            <div className="pt-5">
-                <DashNavbar />
-            </div>
+          <div className="pt-5">
+            <DashNavbar />
+          </div>
         )}
 
         <div className="ml-5">
@@ -216,8 +221,27 @@ const MealPage: React.FC<Props> = ({ mealDataProp, isNew, hasNavbar, redirect='/
         </div>
 
         <div className="p-6 bg-gray-600 bg-opacity-30 rounded-lg shadow-md md:m-4">
+          {foodItems.length > 0 && (
+            <div className="flex flex-row space-x-5 justify-start items-center">
+              <div className="text-center">
+                <button className="btn btn-primary px-10" onClick={saveMeal}>
+                  Save Meal
+                </button>
+              </div>
+              {!isNew && (
+                <div>
+                  <button
+                    className="btn btn-error text-white hover:bg-red-600 w-32"
+                    onClick={deleteMeal}
+                  >
+                    Delete meal
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
           <h2 className="text-4xl font-bold mb-4 text-center text-white">
-            {isNew ? "New Meal" : formatDate(mealData.created_at)} 
+            {isNew ? "New Meal" : formatDate(mealData.created_at)}
           </h2>
 
           <div className="flex flex-col justify-center items-center mt-5 w-full">
@@ -290,23 +314,10 @@ const MealPage: React.FC<Props> = ({ mealDataProp, isNew, hasNavbar, redirect='/
                 </div>
               </div>
 
-              <div className="flex flex-row space-x-5 justify-center items-cente mt-5">
-                <div className="text-center">
-                  <button className="btn btn-primary px-10" onClick={saveMeal}>
-                    Save Meal
-                  </button>
-                </div>
-                {!isNew && (
-                  <div>
-                    <button
-                      className="btn btn-error rounded-full text-white hover:bg-red-600 w-32"
-                      onClick={deleteMeal}
-                    >
-                      Delete meal
-                    </button>
-                  </div>
-                )}
-              </div>
+              <h1 className="text-[#53ac00] text-center mt-5">
+              🍽️ Total Calories: {" "}
+                <b>{foodItems.reduce((total, item) => (total += item.calories), 0)} 🔥</b>
+              </h1>
             </>
           )}
 

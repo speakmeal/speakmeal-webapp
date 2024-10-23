@@ -47,12 +47,6 @@ const SignIn: React.FC = () => {
     setEmail("");
     setPassword("");
 
-    //successful sign up    
-    // triggerAlert(
-    //   "We've just sent you a confirmation email. Please check your inbox",
-    //   "success",
-    //   5000
-    // );
     router.push("/onboarding/first-meal"); //redirect user to the onboarding flow automatically
   };
 

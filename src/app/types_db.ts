@@ -374,21 +374,21 @@ export interface Measurement {
   id: number;
   created_at: string; 
   user_id: string; 
-  weight_kg: number;
-  height_cm: number;
-  abdomen_cm: number;
-  hip_cm: number; 
-  chest_cm: number;
+  weight_pounds: number;
+  height_inches: number;
+  abdomen_inches: number;
+  hip_inches: number; 
+  chest_inches: number;
 }
 export const emptyMeasurement: Measurement = {
   id: -1, 
   created_at: '', 
   user_id: '', 
-  weight_kg: 0, 
-  height_cm: 0, 
-  abdomen_cm: 0, 
-  hip_cm: 0, 
-  chest_cm: 0
+  weight_pounds: 0, 
+  height_inches: 0, 
+  abdomen_inches: 0, 
+  hip_inches: 0, 
+  chest_inches: 0
 }
 
 export interface UserDetails {
@@ -416,3 +416,23 @@ export const emptyUserDetails: UserDetails = {
 
 //constant: duration of trial in days
 export const TRIAL_PERIOD_DAYS = 3;
+
+
+//pre-built plans
+export const prebuitPlans = {
+  'fat loss': {
+    carbohydrates: 25, 
+    proteins: 45, 
+    fats: 30
+  }, 
+  'muscle gain': {
+    carbohydrates: 45, 
+    proteins: 35, 
+    fats: 20
+  }, 
+  'weight loss': {
+    carbohydrates: 30,
+    proteins: 40, 
+    fats: 30
+  }
+};

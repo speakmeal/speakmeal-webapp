@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { FaCoins, FaMicrophone, FaMicrophoneAlt } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaHome, FaMicrophoneAlt, FaInfoCircle } from "react-icons/fa";
 import { useRecordVoice } from "./useRecordVoice";
 import { useAlert } from "../Components/Alert/useAlert";
 import Alert from "../Components/Alert/Alert";
 import { createClient } from "../Utils/supabase/client";
 import AudioWaveform from "./AudioWaveform";
-import DashNavbar from "../Components/DashNavbar";
 import LoadingIndicator from "../Components/LoadingIndicator";
 import { Meal } from "../types_db";
 import MealPage from "../meals/MealPage";
+import Image from 'next/image';
+import { useRouter } from "next/navigation";
 
 function SpeakMealPage() {
   const supabase = createClient();
@@ -19,99 +20,10 @@ function SpeakMealPage() {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [extractedMealData, setExtractedMealData] = useState<Meal | null>(null);
 
+  const router = useRouter();
+
   async function extractMacros(transcript: string) {
-    console.log("Transcript: " + transcript);
-
-    if (!transcript || transcript.length === 0) {
-      setIsPageLoading(false);
-      return;
-    }
-
-    setIsPageLoading(true);
-    const session = await supabase.auth.getSession();
-
-    // Send request to endpoint that uses OpenAI API to extract ingredients from transcript
-    const response = await fetch("/api/getIngredients", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session.data.session?.access_token}`,
-      },
-      body: JSON.stringify({
-        transcript: transcript,
-      }),
-    });
-
-    if (!response.ok) {
-      console.log(response.json);
-      triggerAlert("Error processing transcript", "error");
-      setIsPageLoading(false);
-      return;
-    }
-
-    const resp = await response.json();
-    const { type, foods } = await JSON.parse(resp.response);
-    console.log(foods);
-
-    const foodData = await Promise.all(
-      foods.map(async (item: any) => {
-        try {
-          // Get the macros for each item from nutritionix api
-          const nutriResp = await fetch("/api/getMacros", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              itemName: item.food_name,
-            }),
-          });
-
-          if (!nutriResp.ok) {
-            throw new Error("Error fetching nutrition data");
-          }
-
-          // Use portion sizes to get the macro totals
-          const { macros } = await nutriResp.json();
-          const portion_number =
-            parseFloat(item.weight) / parseFloat(macros.serving_weight_grams); // Get number of portions eaten by user
-
-          return {
-            food_name: `${macros.food_name} - ${item.dose} (${item.weight}g)`,
-            protein_g: Math.round(100 * macros.nf_protein * portion_number) / 100, // Round macros to 2 d.p
-            carbs_g: Math.round(100 * macros.nf_total_carbohydrate * portion_number) / 100,
-            fat_g: Math.round(100 * macros.nf_total_fat * portion_number) / 100,
-            calories: Math.round(macros.nf_calories * portion_number),
-          };
-        } catch (err) {
-          return {
-            food_name: `${item.food_name} - ${item.dose} (${item.weight})`,
-            protein_g: 0,
-            carbs_g: 0,
-            fat_g: 0,
-            calories: 0,
-          };
-        }
-      })
-    );
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    // Save the meal data to the local state
-    setExtractedMealData({
-      id: -1,
-      created_at: "",
-      owner_id: user?.id || "",
-      type: type,
-      food_item: foodData.map((item) => ({
-        ...item,
-        meal_id: -1,
-      })),
-    });
-
-    setIsPageLoading(false);
+    // ... existing code ...
   }
 
   const handleMicClick = () => {
@@ -122,30 +34,48 @@ function SpeakMealPage() {
       startRecording(triggerAlert);
     }
   };
-  
+
   if (isPageLoading) {
     return (
       <div className="h-screen bg-black flex flex-col items-center justify-center">
         <LoadingIndicator />
+        <p className="mt-5 text-white text-lg">Processing your meal...</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-black h-screen">
+    <div className="bg-black min-h-screen">
+      {/* Navbar */}
       <div className="pt-5">
-        <DashNavbar />
+        <nav className="p-4 flex justify-between items-center shadow-md bg-gray-800 bg-opacity-50 rounded-md mx-5">
+          <div className="flex items-center">
+            <Image
+              src="/assets/logo.png"
+              alt="Speak Meal Logo"
+              width={40}
+              height={40}
+            />
+            <span className="text-xl font-bold text-white ml-2">Speak Meal</span>
+          </div>
+          <button
+            className="text-white hover:text-gray-300 transition-colors duration-200"
+            onClick={() => router.push("/dashboard")}
+          >
+            <FaHome size={24} />
+          </button>
+        </nav>
       </div>
 
       {showAlert && <Alert message={message} type={type} />}
 
-      <div className="flex flex-col items-center mt-[20vh]">
+      <div className="flex flex-col items-center mt-10 md:mt-20 lg:mt-32 px-4">
         <div>
           <button
             onClick={handleMicClick}
             className={`${
               recording ? "bg-red-500" : "bg-[#53ac00]"
-            } rounded-full w-32 h-32 text-white text-4xl flex flex-col items-center justify-center`}
+            } rounded-full w-32 h-32 text-white text-4xl flex items-center justify-center transition-transform transform hover:scale-105 active:scale-95`}
           >
             <FaMicrophoneAlt />
           </button>
@@ -157,10 +87,21 @@ function SpeakMealPage() {
             <p className="mt-10 text-white text-xl font-bold">Speak Now</p>
           </div>
         ) : (
-          <div>
-            <p className="mt-10 text-gray-400 text-lg font-bold">
-              Press microphone to start recording
+          <div className="mt-10 max-w-md mx-auto bg-gray-800 bg-opacity-50 p-6 rounded-lg">
+            <div className="flex items-center justify-center">
+              <FaInfoCircle className="text-gray-300 mr-2" size={24} />
+              <p className="text-white text-xl font-semibold text-center">
+                Press the microphone to start recording
+              </p>
+            </div>
+            <p className="text-gray-300 mt-4 text-center">
+              Just speak your meal and we'll do the rest.<br></br>
             </p>
+            <div className="mt-2 p-4 bg-gray-700 rounded-md">
+              <p className="text-gray-400 italic text-center">
+                Example: "For breakfast I had 2 eggs, a bowl of cereal with milk, and a banana"
+              </p>
+            </div>
           </div>
         )}
       </div>

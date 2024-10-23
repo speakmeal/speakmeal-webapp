@@ -1,12 +1,10 @@
 "use client";
 
-import { User } from "@supabase/supabase-js";
 import React, { useEffect, useState } from "react";
 import {
   emptyUserDetails,
   Meal,
   Measurement,
-  Subscription,
   UserDetails,
 } from "../types_db";
 import {
@@ -28,8 +26,8 @@ import { createClient } from "../Utils/supabase/client";
 import { useAlert } from "../Components/Alert/useAlert";
 import Alert from "../Components/Alert/Alert";
 import LoadingIndicator from "../Components/LoadingIndicator";
-import { FaMicrophone, FaTag, FaTape, FaTasks, FaUser } from "react-icons/fa";
-import { formatDate, getTotals } from "../Utils/helpers";
+import { FaMicrophone } from "react-icons/fa";
+import { getTotals } from "../Utils/helpers";
 
 ChartJS.register(
   ArcElement,
@@ -125,7 +123,7 @@ const DashboardPage: React.FC = () => {
     labels: weightLineData.dates,
     datasets: [
       {
-        label: "Weight (Kg)",
+        label: "Weight (lbs)",
         data: weightLineData.values,
         fill: false,
         backgroundColor: "#4F19D6",
@@ -271,7 +269,7 @@ const DashboardPage: React.FC = () => {
     const dateRange = generateDateRange(days);
     const dateMeasurements = measurements.reduce((acc: any, measurement) => {
       const date = pretifyDate(measurement.created_at, true);
-      acc[date] = measurement.weight_kg;
+      acc[date] = measurement.weight_pounds;
       return acc;
     }, {});
 
@@ -375,7 +373,7 @@ const DashboardPage: React.FC = () => {
                     onClick={() => router.push("/speakMeal")}
                   >
                     <FaMicrophone size={40} />
-                    <p className="font-semibold text-xs">Speak your meal</p>
+                    <p className="font-semibold text-xs">Voice meal entry</p>
                   </button>
                 </div>
 
@@ -384,7 +382,7 @@ const DashboardPage: React.FC = () => {
                     className="rounded-full bg-[#4F19D6] text-white w-64 py-2 shadow-md hover:bg-purple-500 bg-opacity-80"
                     onClick={() => router.push("/meals/new")}
                   >
-                    Log Meal
+                    Manual meal entry
                   </button>
 
                   <button

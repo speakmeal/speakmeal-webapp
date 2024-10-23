@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { FaMicrophone, FaMicrophoneAlt } from "react-icons/fa";
+import { FaInfoCircle, FaMicrophone, FaMicrophoneAlt } from "react-icons/fa";
 import Logo from "../../../../public/assets/logo.png"; // Make sure this path is correct
 import { useRecordVoice } from "@/app/speakMeal/useRecordVoice";
 import LoadingIndicator from "@/app/Components/LoadingIndicator";
@@ -169,10 +169,21 @@ const FirstMealPage: React.FC = () => {
             <AudioWaveform />
           </div>
         ) : (
-          <div>
-            <p className="mt-10 text-gray-400 text-lg">
-              Press microphone to record your meal
+          <div className="mt-10 max-w-md mx-auto bg-gray-800 bg-opacity-50 p-6 rounded-lg">
+            <div className="flex items-center justify-center">
+              <FaInfoCircle className="text-gray-300 mr-2" size={24} />
+              <p className="text-white text-xl font-semibold text-center">
+                Press the microphone to start recording
+              </p>
+            </div>
+            <p className="text-gray-300 mt-4 text-center">
+              Just speak your meal and we'll do the rest.<br></br>
             </p>
+            <div className="mt-2 p-4 bg-gray-700 rounded-md">
+              <p className="text-gray-400 italic text-center">
+                Example: "For breakfast I had 2 eggs, a bowl of cereal with milk, and a banana"
+              </p>
+            </div>
           </div>
         )}
       </div>

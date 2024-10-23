@@ -4,35 +4,18 @@ import DashSidebar from "../Components/DashSidebar";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useAlert } from "../Components/Alert/useAlert";
 import LoadingIndicator from "../Components/LoadingIndicator";
-import { Measurement } from "../types_db";
+import { Measurement, prebuitPlans } from "../types_db";
 import { createClient } from "../Utils/supabase/client";
 import { useRouter } from "next/navigation";
 import Alert from "../Components/Alert/Alert";
 import { FaBurn, FaDumbbell, FaWeight } from "react-icons/fa";
+import { inchesToFeet } from "../Components/utils";
 
 interface MacroPercentageInputs {
   carbohydrates: number;
   proteins: number;
   fats: number;
 }
-
-const prebuitPlans = {
-  'fat loss': {
-    carbohydrates: 25, 
-    proteins: 45, 
-    fats: 30
-  }, 
-  'muscle gain': {
-    carbohydrates: 45, 
-    proteins: 35, 
-    fats: 20
-  }, 
-  'weight loss': {
-    carbohydrates: 30,
-    proteins: 40, 
-    fats: 30
-  }
-};
 
 const Goals: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -81,13 +64,19 @@ const Goals: React.FC = () => {
 
   /**
    * Inverse of 'getMacroTargetGrams'
-   * @param macro 
-   * @param totalCalories 
+   * @param macro
+   * @param totalCalories
    */
-  const getMacroTargetPercentage = (macro: keyof MacroPercentageInputs, macroTargetG: number, totalCalories: number) => {
-    console.log(macroTargetG * caloriesPerGram[macro])
-    return Math.round(((macroTargetG * caloriesPerGram[macro]) / totalCalories) * 100);
-  }
+  const getMacroTargetPercentage = (
+    macro: keyof MacroPercentageInputs,
+    macroTargetG: number,
+    totalCalories: number
+  ) => {
+    console.log(macroTargetG * caloriesPerGram[macro]);
+    return Math.round(
+      ((macroTargetG * caloriesPerGram[macro]) / totalCalories) * 100
+    );
+  };
 
   /**
    * Save Calorie and nutrient goals to the database
@@ -176,15 +165,27 @@ const Goals: React.FC = () => {
       setIsLoading(false);
       return;
     }
-    
+
     setDailyCalorieGoal(profile.target_daily_calories);
 
     //recover percentages for nutrients from the gram values stored in the database
     setMacroPercentageInputs({
-      carbohydrates: getMacroTargetPercentage('carbohydrates', profile.carbohydrates_grams_goal, profile.target_daily_calories), 
-      proteins: getMacroTargetPercentage('proteins', profile.protein_grams_goal, profile.target_daily_calories), 
-      fats: getMacroTargetPercentage('fats', profile.fat_grams_goal, profile.target_daily_calories)
-    })
+      carbohydrates: getMacroTargetPercentage(
+        "carbohydrates",
+        profile.carbohydrates_grams_goal,
+        profile.target_daily_calories
+      ),
+      proteins: getMacroTargetPercentage(
+        "proteins",
+        profile.protein_grams_goal,
+        profile.target_daily_calories
+      ),
+      fats: getMacroTargetPercentage(
+        "fats",
+        profile.fat_grams_goal,
+        profile.target_daily_calories
+      ),
+    });
 
     setIsLoading(false);
   };
@@ -195,11 +196,11 @@ const Goals: React.FC = () => {
 
   //mapping of measurement keys, descriptions and emojis
   const metrics = [
-    { key: "height_cm", label: "Height", emoji: "📏" },
-    { key: "weight_kg", label: "Weight", emoji: "⚖️" },
-    { key: "abdomen_cm", label: "Abdomen", emoji: "🧍‍♂️" },
-    { key: "hip_cm", label: "Hip", emoji: "🍑" },
-    { key: "chest_cm", label: "Chest", emoji: "💪" },
+    { key: "height_inches", label: "Height (inches)", emoji: "📏" },
+    { key: "weight_pounds", label: "Weight (lbs)", emoji: "⚖️" },
+    { key: "abdomen_inches", label: "Abdomen (inches)", emoji: "🧍‍♂️" },
+    { key: "hip_inches", label: "Hip (inches)", emoji: "🍑" },
+    { key: "chest_inches", label: "Chest (inches)", emoji: "💪" },
   ];
 
   return (
@@ -224,68 +225,7 @@ const Goals: React.FC = () => {
             </div>
           ) : (
             <div>
-              <h1 className="text-4xl font-semibold text-center text-white">
-                Progress
-              </h1>
-
-              {startingMeasurement && endingMeasurement ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center mt-20">
-                  {metrics.map(({ key, label, emoji }) => {
-                    const change =
-                      (endingMeasurement[key as keyof Measurement] as number) -
-                      (startingMeasurement[key as keyof Measurement] as number);
-
-                    const percentageChange =
-                      (change /
-                        (startingMeasurement[
-                          key as keyof Measurement
-                        ] as number)) *
-                      100;
-
-                    return (
-                      <div
-                        key={key}
-                        className="w-60 bg-gray-800 text-white p-4 rounded-lg shadow-lg h-40"
-                      >
-                        <div className="flex justify-between items-center">
-                          <span className="text-3xl">{emoji}</span>
-                          <span className="text-lg">{label}</span>
-                        </div>
-                        <div className="mt-4">
-                          <p className="text-sm">
-                            Start:{" "}
-                            <span className="font-bold">
-                              {startingMeasurement[key as keyof Measurement]}
-                            </span>
-                          </p>
-                          <p className="text-sm">
-                            Current:{" "}
-                            <span className="font-bold">
-                              {endingMeasurement[key as keyof Measurement]}
-                            </span>
-                          </p>
-                          <p className="text-sm mt-2">
-                            Change:{" "}
-                            {getChangeIndicator(change, percentageChange)}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-center mt-20 border-2 py-5 mx-20">
-                  <h2>You have not taken any measurements yet</h2>
-                  <button
-                    className="btn btn-primary rounded-full mt-5 w-32"
-                    onClick={() => router.push("/measurements/new")}
-                  >
-                    Do it now
-                  </button>
-                </div>
-              )}
-
-              <h1 className="text-4xl font-semibold text-center mt-20 text-white">
+              <h1 className="text-4xl font-semibold text-center mt-5 text-white">
                 Goals
               </h1>
 
@@ -380,22 +320,34 @@ const Goals: React.FC = () => {
                   <h2 className="text-xl text-white">Pre-built Plans</h2>
 
                   <div className="flex flex-col md:flex-row space-y-5 md:space-x-5 md:space-y-0 items-center justify-center mt-5">
-                    <button className="btn bg-gray-700 bg-opacity-30 w-32 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
-                            onClick={() => setMacroPercentageInputs(prebuitPlans['fat loss'])}>
+                    <button
+                      className="btn bg-gray-700 bg-opacity-30 w-32 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
+                      onClick={() =>
+                        setMacroPercentageInputs(prebuitPlans["fat loss"])
+                      }
+                    >
                       <h2 className="text-md text-white">Fat Loss</h2>
-                      <FaBurn className="text-red-500 text-3xl"/>
+                      <FaBurn className="text-red-500 text-3xl" />
                     </button>
 
-                    <button className="btn bg-gray-700 bg-opacity-30 w-40 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
-                            onClick={() => setMacroPercentageInputs(prebuitPlans['muscle gain'])}>
+                    <button
+                      className="btn bg-gray-700 bg-opacity-30 w-40 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
+                      onClick={() =>
+                        setMacroPercentageInputs(prebuitPlans["muscle gain"])
+                      }
+                    >
                       <h2 className="text-md text-white">Muscle Gain</h2>
-                      <FaDumbbell className="text-orange-500 text-3xl"/>
+                      <FaDumbbell className="text-orange-500 text-3xl" />
                     </button>
 
-                    <button className="btn bg-gray-700 bg-opacity-30 w-32 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
-                            onClick={() => setMacroPercentageInputs(prebuitPlans['weight loss'])}>
+                    <button
+                      className="btn bg-gray-700 bg-opacity-30 w-32 h-32 p-5 rounded-lg flex flex-col items-center justify-center space-y-3"
+                      onClick={() =>
+                        setMacroPercentageInputs(prebuitPlans["weight loss"])
+                      }
+                    >
                       <h2 className="text-md text-white">Weight Loss</h2>
-                      <FaWeight className="text-green-500 text-3xl"/>
+                      <FaWeight className="text-green-500 text-3xl" />
                     </button>
                   </div>
                 </div>
@@ -454,6 +406,66 @@ const Goals: React.FC = () => {
                     </div>
                   ))}
               </div>
+            </div>
+          )}
+
+          <h1 className="text-4xl font-semibold text-center text-white mt-10">
+            Progress
+          </h1>
+
+          {startingMeasurement && endingMeasurement ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center mt-5 pb-5">
+              {metrics.map(({ key, label, emoji }) => {
+                const change =
+                  (endingMeasurement[key as keyof Measurement] as number) -
+                  (startingMeasurement[key as keyof Measurement] as number);
+
+                const percentageChange =
+                  (change /
+                    (startingMeasurement[key as keyof Measurement] as number)) *
+                  100;
+
+                return (
+                  <div
+                    key={key}
+                    className="w-60 bg-gray-800 text-white p-4 rounded-lg shadow-lg h-40"
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="text-3xl">{emoji}</span>
+                      <span className="text-lg">{label}</span>
+                    </div>
+                    <div className="mt-4">
+                      <p className="text-sm">
+                        Start:{" "}
+                        <span className="font-bold">
+                          {key !== 'height_inches' ? startingMeasurement[key as keyof Measurement] : inchesToFeet(startingMeasurement[key as keyof Measurement] as number)}
+                        </span>
+                      </p>
+                      <p className="text-sm">
+                        Current:{" "}
+                        <span className="font-bold">
+                        {key !== 'height_inches' ? endingMeasurement[key as keyof Measurement] : inchesToFeet(endingMeasurement[key as keyof Measurement] as number)}
+                        </span>
+                      </p>
+                      <p className="text-sm mt-2">
+                        Change: {getChangeIndicator(change, percentageChange)}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center mt-5 border-2 py-5 mx-20 px-5">
+              <h2 className="text-white">
+                You have not taken any measurements yet
+              </h2>
+              <button
+                className="btn btn-primary rounded-full mt-5 w-32"
+                onClick={() => router.push("/measurements/new")}
+              >
+                Do it now
+              </button>
             </div>
           )}
         </div>
