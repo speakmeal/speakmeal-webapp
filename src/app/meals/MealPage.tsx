@@ -280,9 +280,17 @@ const MealPage: React.FC<Props> = ({
             </button>
           </div>
 
+          <h1 className="text-[#53ac00] text-center mt-10">
+            🍽️ Total Calories:{" "}
+            <b>
+              {foodItems.reduce((total, item) => (total += item.calories), 0)}{" "}
+              🔥
+            </b>
+          </h1>
+
           {foodItems.length > 0 && (
             <>
-              <div className="mt-5">
+              <div className="mt-1">
                 <h1 className="text-xl text-white mb-2">Meal Items</h1>
               </div>
 
@@ -313,11 +321,6 @@ const MealPage: React.FC<Props> = ({
                   />
                 </div>
               </div>
-
-              <h1 className="text-[#53ac00] text-center mt-5">
-              🍽️ Total Calories: {" "}
-                <b>{foodItems.reduce((total, item) => (total += item.calories), 0)} 🔥</b>
-              </h1>
             </>
           )}
 
