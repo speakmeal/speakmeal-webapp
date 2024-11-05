@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  emptyUserDetails,
-  Meal,
-  Measurement,
-  UserDetails,
-} from "../types_db";
+import { emptyUserDetails, Meal, Measurement, UserDetails } from "../types_db";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -315,12 +310,12 @@ const DashboardPage: React.FC = () => {
       userData.measurement,
       30
     );
-    setWeightLineData({ dates: weightDates, values: weights });                
+    setWeightLineData({ dates: weightDates, values: weights });
     setIsLoading(false);
   };
 
   useEffect(() => {
-    console.log('loading data');
+    console.log("loading data");
     loadData();
   }, []);
 
@@ -341,7 +336,7 @@ const DashboardPage: React.FC = () => {
           </header>
 
           {isLoading ? (
-            <div className="h-screen flex justify-center items-center">
+            <div className="h-screen flex justify-center items-center w-full">
               <LoadingIndicator />
             </div>
           ) : (
@@ -352,13 +347,11 @@ const DashboardPage: React.FC = () => {
                 </h1>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
-                    <Image
-                      src="/assets/user-avatar.png"
-                      alt="User Avatar"
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700">
+                      <p className="text-white text-lg font-semibold">
+                        {userData.name.charAt(0).toUpperCase()}
+                      </p>
+                    </div>
                     <div>
                       <p className="text-white">{userData.email}</p>
                     </div>
@@ -506,7 +499,7 @@ const DashboardPage: React.FC = () => {
                     <h2 className="text-xl font-bold text-white">
                       Macro goals
                     </h2>
-                    
+
                     <div className="grid grid-cols-3 gap-5 items-center mt-7">
                       {/* Carbs total */}
                       <p className="text-white">Carbohydrates</p>
@@ -519,9 +512,11 @@ const DashboardPage: React.FC = () => {
                               100 *
                               Math.min(
                                 1,
-                                Math.max(dailyBreakdown.carbs_g /
-                                         userData.carbohydrates_grams_goal, 
-                                         0.15)
+                                Math.max(
+                                  dailyBreakdown.carbs_g /
+                                    userData.carbohydrates_grams_goal,
+                                  0.15
+                                )
                               )
                             }%`,
                           }}
@@ -532,7 +527,7 @@ const DashboardPage: React.FC = () => {
                         {Math.round(dailyBreakdown.carbs_g)} /{" "}
                         {userData.carbohydrates_grams_goal}g
                       </p>
-                      
+
                       {/* Protein total */}
                       <p className="text-white">Protein</p>
 
@@ -544,9 +539,11 @@ const DashboardPage: React.FC = () => {
                               100 *
                               Math.min(
                                 1,
-                                Math.max(dailyBreakdown.protein_g /
-                                         userData.protein_grams_goal, 
-                                         0.15) 
+                                Math.max(
+                                  dailyBreakdown.protein_g /
+                                    userData.protein_grams_goal,
+                                  0.15
+                                )
                               )
                             }%`,
                           }}
@@ -557,7 +554,7 @@ const DashboardPage: React.FC = () => {
                         {Math.round(dailyBreakdown.protein_g)} /{" "}
                         {userData.protein_grams_goal}g
                       </p>
-                      
+
                       {/* Fat total */}
                       <p className="text-white">Fat</p>
 
@@ -569,9 +566,11 @@ const DashboardPage: React.FC = () => {
                               100 *
                               Math.min(
                                 1,
-                                Math.max(dailyBreakdown.fat_g /
-                                         userData.fat_grams_goal, 
-                                         0.15)
+                                Math.max(
+                                  dailyBreakdown.fat_g /
+                                    userData.fat_grams_goal,
+                                  0.15
+                                )
                               )
                             }%`,
                           }}
@@ -583,8 +582,6 @@ const DashboardPage: React.FC = () => {
                         {userData.fat_grams_goal}g
                       </p>
                     </div>
-
-
                   </div>
 
                   <div className="bg-gray-600 bg-opacity-30 p-6 rounded-lg shadow-md">
