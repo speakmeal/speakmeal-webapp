@@ -101,3 +101,9 @@ body {
   background-size: 600% 600%;
   animation: gradient 10s ease;
 }
+
+.gradient-bg-2 {
+  background: linear-gradient(270deg, #ff0000, #800080, #00ff00);
+  background-size: 600% 600%;
+  animation: gradient 10s ease;
+}

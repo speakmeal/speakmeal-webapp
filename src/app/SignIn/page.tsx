@@ -44,8 +44,18 @@ const SignIn: React.FC = () => {
       return;
     }
 
-    setEmail("");
-    setPassword("");
+    //schedule email campaign
+    const resp = await fetch("/api/schedule-email-campaign", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+      }
+    });
+
+    if (!resp.ok){
+      console.error("Error creating email campaign for the user");
+      console.log(resp);
+    }
 
     router.push("/onboarding/first-meal"); //redirect user to the onboarding flow automatically
   };
@@ -58,7 +68,7 @@ const SignIn: React.FC = () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: provider, 
       options: {
-        redirectTo: `${window.location.origin}/SignIn`
+        redirectTo: `${window.location.origin}/SignIn`, 
       }
     })
 
@@ -66,6 +76,20 @@ const SignIn: React.FC = () => {
       triggerAlert(error.message, "error");
       setIsLoading(false);
       return;
+    }
+
+    const {data: { user }} = await supabase.auth.getUser();
+    
+    //schedule email campaign
+    const resp = await fetch("/api/schedule-email-campaign", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+      }
+    });
+
+    if (!resp.ok){
+      console.error("Error creating email campaign for the user");
     }
   };
 

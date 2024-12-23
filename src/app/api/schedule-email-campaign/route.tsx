@@ -1,3 +1,9 @@
+import { createClient } from "@/app/Utils/supabase/server";
+import { NextRequest, NextResponse } from "next/server";
+
+import { Resend } from "resend";
+
+const emailTemplate = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,32 +52,40 @@
         </div>
     </div>
 </body>
-</html>
+</html>`;
 
 
-<!-- //brevo email sending
-const brevo = require('@getbrevo/brevo');
-let defaultClient = brevo.ApiClient.instance;
+export async function POST(req: NextRequest) {
+  //authenticate user
+  const token = req.headers.get("Authorization")?.split("Bearer ")[1];
+  if (!token) {
+    console.error("No token provided");
+    return NextResponse.error();
+  }
 
-let apiKey = defaultClient.authentications['api-key'];
-apiKey.apiKey = 'xkeysib-YOUR_API_KEY';
+  console.log('>> Scheduling email');
 
-let apiInstance = new brevo.TransactionalEmailsApi();
-let sendSmtpEmail = new brevo.SendSmtpEmail();
+  const supabaseServerClient = createClient();
+  const { data: { user }, error } = await supabaseServerClient.auth.getUser(token);
+  if (error || !user) {
+    console.error("Error getting user")
+    return NextResponse.error();
+  }
 
-sendSmtpEmail.subject = "My {{params.subject}}";
-sendSmtpEmail.htmlContent = "<html><body><h1>Common: This is my first transactional email {{params.parameter}}</h1></body></html>";
-sendSmtpEmail.sender = { "name": "John", "email": "example@example.com" };
-sendSmtpEmail.to = [
-  { "email": "example@brevo.com", "name": "sample-name" }
-];
-sendSmtpEmail.replyTo = { "email": "example@brevo.com", "name": "sample-name" };
-sendSmtpEmail.headers = { "Some-Custom-Name": "unique-id-1234" };
-sendSmtpEmail.params = { "parameter": "My param value", "subject": "common subject" };
+  //TODO: ensure email is only scheduled once by getting the user's profile -> use database flag
 
+  //schedule email in 3 days
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const TPlus3Days = new Date(Date.now() + (3 * 24 * 60 * 60 * 1000)).toISOString();
+  await resend.emails.send({
+    from: "Adam <info@tech-cortex.co.uk>",
+    to: [ user.email || '' ],
+    subject: "Your Speakmeal trial has come to an end",
+    html: emailTemplate,
+    scheduledAt: TPlus3Days,
+  });
 
-apiInstance.sendTransacEmail(sendSmtpEmail).then(function (data) {
-  console.log('API called successfully. Returned data: ' + JSON.stringify(data));
-}, function (error) {
-  console.error(error);
-}); -->
+  return NextResponse.json({
+    success: true
+  });
+}

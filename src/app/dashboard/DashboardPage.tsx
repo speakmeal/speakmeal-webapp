@@ -21,7 +21,7 @@ import { createClient } from "../Utils/supabase/client";
 import { useAlert } from "../Components/Alert/useAlert";
 import Alert from "../Components/Alert/Alert";
 import LoadingIndicator from "../Components/LoadingIndicator";
-import { FaMicrophone } from "react-icons/fa";
+import { FaMicrophone, FaMicrophoneAlt, FaMicrophoneAltSlash } from "react-icons/fa";
 import { getTotals } from "../Utils/helpers";
 
 ChartJS.register(
@@ -367,6 +367,14 @@ const DashboardPage: React.FC = () => {
                   >
                     <FaMicrophone size={40} />
                     <p className="font-semibold text-xs">Voice meal entry</p>
+                  </button>
+
+                  <button
+                    className="rounded-lg text-white w-32 h-32 shadow-md m-5 hover:bg-purple-500 bg-opacity-80 gradient-bg-2 flex flex-col justify-center items-center space-y-3"
+                    onClick={() => router.push("/chat")}
+                  >
+                    <FaMicrophoneAlt size={40} />
+                    <p className="font-semibold text-xs">Talk to Specs <br></br> (AI PT)</p>
                   </button>
                 </div>
 

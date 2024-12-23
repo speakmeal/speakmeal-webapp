@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { createClient } from "@/app/Utils/supabase/server";
-import { createClient as createAdminClient, SupabaseClient } from "@supabase/supabase-js";
 import { TRIAL_PERIOD_DAYS } from "../types_db";
 
 export async function validateRequest(req: NextRequest) {

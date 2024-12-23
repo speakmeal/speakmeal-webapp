@@ -32,7 +32,7 @@ export default function RootLayout({
 //email: Getspeakmeal@gmail.com
 //password: BigMsSAAS33#
 
-//Github accunt:
+//Github account:
 //email: getspeakmeal@gmail.com 
 //password: BigMeals33##
 
