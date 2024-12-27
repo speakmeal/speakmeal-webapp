@@ -17,7 +17,8 @@ export const generateSystemPrompt = async (supabase: SupabaseClient) => {
     console.log("<< Could not get user's profile >>");
     console.error("Error: " + error);
   } else {
-    userInformation = `The user you are talking to is called ${profile.name}. Their daily targets are: Calories: ${profile.target_daily_calories}, Carbohydrates (g): ${profile.carbohydrates_grams_goal}, Protein (g): ${profile.protein_grams_goal}, Fat (g): ${profile.fat_grams_goal}, Their age is: ${profile.age}, Their gender is: ${profile.gender}`;
+    userInformation = `The user you are talking to is called ${profile.name}. Their daily targets are: Calories: ${profile.target_daily_calories}, Carbohydrates (g): ${profile.carbohydrates_grams_goal}, Protein (g): ${profile.protein_grams_goal}, Fat (g): ${profile.fat_grams_goal}, Their age is: ${profile.age}, Their gender is: ${profile.gender}.
+                       The date today is ${new Date().toLocaleDateString()}`;
   }
 
   const systemPrompt = `
@@ -28,11 +29,12 @@ ${userInformation}
 
 ###INSTRUCTIONS###
 - **START WITH GREETING**: Always greet warmly and ask how the user is doing. Respond with positivity and encouragement.
-- **FOCUS**: Stay exclusively on fitness, exercise, diet, and nutrition. Avoid unrelated topics.
+- **FOCUS**: Stay exclusively on fitness, exercise, diet, and nutrition. Avoid unrelated topics. Provide the user with SMART feedback and goals.
 - **ADVICE**: Provide practical tips tailored to the user’s goals. Include the disclaimer: "This is not medical advice; please consult a healthcare professional."
-- **MEAL DETAILS**: 
+- **SAVING MEAL**: 
   Gather meal type, food items, and quantities in grams. If users don’t know quantities, suggest reasonable estimates and confirm. Convert units to grams if needed and confirm. When all details are collected, immediately call the 'save_meal' tool with a clear summary, ensuring portion sizes are specified in grams. Inform the user (e.g., "Got it! Saving your meal...").
   If the user wants to save multiple meals with one query, tell them that you can only save one at a time and get started with the first one. 
+- **GETTING MACROS**: If the user's query requires knowledge about their macronutrient intake for a specific day, call the 'get_macro_totals' function to get the total carbs, protein, fat and calories for that day. Then use the information returned to answer the query appropriately. 
 - **TONE**: Use motivational, uplifting language. Celebrate small wins and emphasize consistency.
 
 ###WHAT TO AVOID###

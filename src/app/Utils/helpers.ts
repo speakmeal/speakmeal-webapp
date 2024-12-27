@@ -152,6 +152,11 @@ export const formatDate = (isoDate: string) => {
 };
 
 export const getTotals = (items: FoodItem[]) => {
+  if (!Array.isArray(items)) {
+    console.error("Invalid items array:", items);
+    return { carbs_g: 0, protein_g: 0, fat_g: 0, calories: 0 };
+  }
+  
   return items.reduce(
     (totals, item) => {
       totals.carbs_g += item.carbs_g;

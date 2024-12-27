@@ -221,7 +221,7 @@ const MealSummary: React.FC<Props> = ({
         </div>
 
         <div className="p-6 bg-gray-600 bg-opacity-30 rounded-lg shadow-md md:m-4">
-          {foodItems.length > 0 && (
+          {foodItems && foodItems.length > 0 && (
             <div className="flex flex-row space-x-5 justify-start items-center">
               <div className="text-center">
                 <button className="btn btn-primary px-10" onClick={saveMeal}>

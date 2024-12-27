@@ -10,7 +10,7 @@ export async function init(
   setConnection: React.Dispatch<React.SetStateAction<RTCPeerConnection | null>>,
   setStream: React.Dispatch<React.SetStateAction<MediaStream | null>>,
   setIsMicLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  setExtractedMealData: React.Dispatch<React.SetStateAction<Meal | null>>, 
+  setExtractedMealData: React.Dispatch<React.SetStateAction<Meal | null>>,
   isQuickMode: boolean
 ) {
   //get supabase auth token
@@ -68,6 +68,18 @@ export async function init(
               required: ["description"],
             },
           },
+          {
+            type: "function",
+            name: "get_macro_totals",
+            description: `Use this tool to get the total macronutrient intake for a specific day. Provide the target date in the format 'YYYY-MM-DD'`,
+            parameters: {
+              type: "object",
+              properties: {
+                targetDate: { type: "string" },
+              },
+              required: ["targetDate"],
+            },
+          },
         ],
         tool_choice: "auto",
         voice: "verse",
@@ -94,11 +106,17 @@ export async function init(
 
         const fn = toolFunctions[functionName];
         if (fn) {
-          const resp = await fn(args, supabase, user!, dc, data.call_id, isQuickMode);
-          if (!isQuickMode && resp){
+          const resp = await fn(
+            args,
+            supabase,
+            user!,
+            dc,
+            data.call_id,
+            isQuickMode
+          );
+          if (!isQuickMode && resp) {
             setExtractedMealData(resp);
           }
-          
         } else {
           console.error("Unknown function: " + functionName);
         }
