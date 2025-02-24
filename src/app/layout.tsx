@@ -20,25 +20,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-
-//supabase account:
-//email: Getspeakmeal@gmail.com
-//password: MsSAAS33#
-//dbPassword: RobertoCalories10#
-
-
-//Resend account:
-//email: Getspeakmeal@gmail.com
-//password: BigMsSAAS33#
-
-//Github account:
-//email: getspeakmeal@gmail.com 
-//password: BigMeals33##
-
-
-//Pushing + deploy to vercel:
-// > git config user.email "getspeakmeal@gmail.com"
-// > git push origin main
-
-//Add bicep measurement
