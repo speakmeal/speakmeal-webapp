@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.speakmeal.app",
+      "sha256_cert_fingerprints": [
+        "77:0C:D5:D9:58:67:E1:8F:64:5D:F4:BA:B1:9E:6A:0E:B1:5F:50:B9:21:A6:4E:6B:9A:29:C0:A4:53:9D:58:C8",
+        "14:7A:C5:A2:92:22:60:0F:55:17:20:2B:3B:0F:6B:E9:E6:54:BE:8C:5F:B8:DB:80:BC:FF:E8:66:CD:0E:A5:B1"
+      ]
+    }
+  }
+]
